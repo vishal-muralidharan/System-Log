@@ -1,8 +1,10 @@
-from django.shortcuts import render
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from .serializers import EmployeeSerializer
 
-@api_view(['GET'])
-def ApiOverview(RequestInstance):
-    MessageData = {"Message": "Backend system is active and routing correctly."}
-    return Response(MessageData)
+class EmployeeViewSet(viewsets.ModelViewSet):
+    """
+    Handles Add/Edit/Delete/List for Employee data.
+    """
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
+    permission_classes = [IsAuthenticated]
