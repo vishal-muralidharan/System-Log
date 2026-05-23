@@ -58,3 +58,12 @@ class EmployeeSerializer(serializers.ModelSerializer):
             
         instance.save()
         return instance
+    
+
+class AttendanceSerializer(serializers.ModelSerializer):
+    # This pulls the actual employee ID to the frontend, and not the database row ID number.
+    EmployeeStringId = serializers.ReadOnlyField(source='EmployeeRef.EmployeeId')
+
+    class Meta:
+        model = AttendanceLog
+        fields = ['LogId', 'EmployeeRef', 'EmployeeStringId', 'LoginTime', 'LogoutTime', 'WorkStatus']
