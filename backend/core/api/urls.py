@@ -1,9 +1,14 @@
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import ApiOverview
+from .views import EmployeeViewSet
+
+# The router automatically generates standard CRUD URLs for your viewsets
+ApiRouter = DefaultRouter()
+ApiRouter.register(r'employees', EmployeeViewSet, basename='employee')
 
 urlpatterns = [
-    path('', ApiOverview, name='ApiOverview'),
+    path('', include(ApiRouter.urls)),
     path('auth/login/', TokenObtainPairView.as_view(), name='TokenObtainPair'),
     path('auth/refresh/', TokenRefreshView.as_view(), name='TokenRefresh'),
 ]
