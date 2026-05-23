@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 class EmployeeManager(BaseUserManager):
     def create_user(self, EmployeeId, Password=None, **ExtraFields):
         if not EmployeeId:
-            raise ValueError('EMPLOYEE ID REQUIRED ')
+            raise ValueError('EMPLOYEE ID REQUIRED')
         UserInstance = self.model(EmployeeId=EmployeeId, **ExtraFields)
         UserInstance.set_password(Password)
         UserInstance.save(using=self._db)
