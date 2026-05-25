@@ -1,18 +1,22 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 class EmployeeManager(BaseUserManager):
-    def create_user(self, EmployeeId, Password=None, **ExtraFields):
+    def create_user(self, EmployeeId, password=None, **ExtraFields):
         if not EmployeeId:
             raise ValueError('EMPLOYEE ID REQUIRED')
         UserInstance = self.model(EmployeeId=EmployeeId, **ExtraFields)
-        UserInstance.set_password(Password)
+        UserInstance.set_password(password)
         UserInstance.save(using=self._db)
         return UserInstance
 
+    def create_superuser(self, EmployeeId, password=None, **ExtraFields):
+        ExtraFields.setdefault('IsAdmin', True)
+        ExtraFields.setdefault('IsActive', True)
+        return self.create_user(EmployeeId, password, **ExtraFields)
 
-class Employee(AbstractBaseUser):
-    EmployeeId = models.CharField(max_length=50, unique=True)
+class Employee(AbstractBaseUser, PermissionsMixin):
+    EmployeeId = models.CharField(max_length=50, unique=True, blank=True)
     ProjectInvolved = models.CharField(max_length=100)
     IsAdmin = models.BooleanField(default=False)
     IsActive = models.BooleanField(default=True)
@@ -21,6 +25,27 @@ class Employee(AbstractBaseUser):
 
     USERNAME_FIELD = 'EmployeeId'
 
+    @property
+    def is_staff(self):
+        return self.IsAdmin
+        
+    @property
+    def is_superuser(self):
+        return self.IsAdmin
+
+    def save(self, *args, **kwargs):
+        if not self.EmployeeId:
+            LastEmployee = Employee.objects.filter(EmployeeId__startswith='EMP').order_by('id').last()
+            
+            if LastEmployee:
+                LastIdNum = int(LastEmployee.EmployeeId.replace('EMP', ''))
+                NewIdNum = LastIdNum + 1
+            else:
+                NewIdNum = 1
+            
+            self.EmployeeId = f"EMP{NewIdNum:04d}"
+            
+        super().save(*args, **kwargs)
 
 class AttendanceLog(models.Model):
     LogId = models.AutoField(primary_key=True)
