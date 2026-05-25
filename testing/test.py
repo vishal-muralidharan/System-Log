@@ -1,7 +1,5 @@
 import requests
-
 BASE_URL = 'http://localhost:8000/api'
-
 credentials = {"EmployeeId": "EMP0001", "password": "Asdfg1006!"}
 
 login_response = requests.post(f"{BASE_URL}/auth/login/", json=credentials)
