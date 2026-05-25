@@ -1,4 +1,5 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
@@ -10,9 +11,14 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     """
     Handles Add/Edit/Delete/List for Employee data.
     """
-    queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
     permission_classes = [IsAuthenticated]
+
+    # For Admin Sorting, Searching and Filtering
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['ProjectInvolved', 'IsActive', 'IsAdmin']
+    search_fields = ['EmployeeId']
+    ordering_fields = ['id', 'EmployeeId']
 
     def get_queryset(self):
         User = self.request.user
@@ -58,9 +64,13 @@ class AttendanceLogViewSet(viewsets.ModelViewSet):
     """ 
     Handle Add/Edit/Delete/List for all Attendance login data 
     """
-    queryset = AttendanceLog.objects.all()
     serializer_class = AttendanceSerializer
     permission_classes = [IsAuthenticated]
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['WorkStatus', 'EmployeeRef'] 
+    search_fields = ['EmployeeRef__EmployeeId']
+    ordering_fields = ['LoginTime', 'LogoutTime']
 
     @action(detail=False, methods=['POST']) # Marks the Login of Employees
     def login(self, request):
