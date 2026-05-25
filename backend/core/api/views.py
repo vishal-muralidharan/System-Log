@@ -19,6 +19,16 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         if User.IsAdmin:
             return Employee.objects.all()
         return Employee.objects.filter(id=User.id)
+    
+    def create(self, request, *args, **kwargs):
+        if not request.user.IsAdmin:
+            return Response({"Error": "Only admins can add employees."}, status=403)
+        return super().create(request, *args, **kwargs)
+    
+    def destroy(self, request, *args, **kwargs):
+        if not request.user.IsAdmin:
+            return Response({"Error": "Only admins can delete employee data."}, status=403)
+        return super().destroy(request, *args, **kwargs)
 
 
 class AttendanceLogViewSet(viewsets.ModelViewSet):
