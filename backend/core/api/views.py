@@ -29,6 +29,19 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         if not request.user.IsAdmin:
             return Response({"Error": "Only admins can delete employee data."}, status=403)
         return super().destroy(request, *args, **kwargs)
+    
+    def retrieve(self, request, *args, **kwargs):
+        EmployeeInstance = self.get_object()
+        SerializedEmployee = self.get_serializer(EmployeeInstance)
+        
+        ResponseData = SerializedEmployee.data
+
+        Logs = AttendanceLog.objects.filter(EmployeeRef=EmployeeInstance).order_by('-LoginTime')
+        
+        SerializedLogs = AttendanceSerializer(Logs, many=True)
+        ResponseData['AttendanceHistory'] = SerializedLogs.data
+
+        return Response(ResponseData, status=200)
 
 
 class AttendanceLogViewSet(viewsets.ModelViewSet):
