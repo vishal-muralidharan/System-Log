@@ -14,6 +14,12 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     serializer_class = EmployeeSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        User = self.request.user
+        if User.IsAdmin:
+            return Employee.objects.all()
+        return Employee.objects.filter(id=User.id)
+
 
 class AttendanceLogViewSet(viewsets.ModelViewSet):
     """ 
