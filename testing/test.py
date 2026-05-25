@@ -1,6 +1,6 @@
 import requests
 BASE_URL = 'http://localhost:8000/api'
-credentials = {"EmployeeId": "EMP0001", "password": "Asdfg1006!"}
+credentials = {"EmployeeId": "EMP0004", "password": "Asdfg1006!"}
 
 login_response = requests.post(f"{BASE_URL}/auth/login/", json=credentials)
 
@@ -20,7 +20,7 @@ if login_response.status_code == 200:
     print(f"Data: {employee_response.json()}\n")
 
     print("--- STEP 3: Testing Clock In (POST /attendance/login/) ---")
-    clock_in_payload = {"WorkStatus": "In-Office"}
+    clock_in_payload = {"WorkStatus": "WFH"}
     clock_in_response = requests.post(f"{BASE_URL}/attendance/login/", json=clock_in_payload, headers=headers)
     print(f"Status Code: {clock_in_response.status_code}")
     print(f"Data: {clock_in_response.json()}\n")

@@ -64,12 +64,27 @@ class AttendanceLogViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST']) # Marks the Login of Employees
     def login(self, request):
+        Date = timezone.now().date()
+
+        LoggedToday = AttendanceLog.objects.filter(
+            EmployeeRef=request.user,
+            LoginTime__date=Date,
+        ).exists()
+
+        if LoggedToday:
+            return Response({"Error": "Cannot have 2 logins for the same day"}, status=400)
+
         Status = request.data.get('WorkStatus', 'In-Office')
 
         NewLog = AttendanceLog.objects.create(
             EmployeeRef = request.user,
             WorkStatus = Status
         )
+
+        if Status.lower() == 'leave':
+            NewLog.LogoutTime = timezone.now()
+
+        NewLog.save()
 
         SerializedData = self.get_serializer(NewLog)
         return Response(SerializedData.data, status=201)
@@ -85,10 +100,13 @@ class AttendanceLogViewSet(viewsets.ModelViewSet):
         ).first()
 
         if CloseLog:
+            if CloseLog.WorkStatus.lower() == 'leave':
+                return Response({"Error": "Logout not required for a leave"}, status=400)
+            
             CurrentTime = timezone.now()
             CloseLog.LogoutTime = CurrentTime
             CloseLog.save()
 
             return Response({"LogoutTime": CurrentTime}, status=200)
         
-        return Response({"Error": "No valid attendance login for today"}, status=404)
+        return Response({"Error": "No open shift found for today. (Note: Previous days cannot be closed today)"}, status=404)
