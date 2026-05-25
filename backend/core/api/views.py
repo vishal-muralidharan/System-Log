@@ -42,6 +42,16 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         ResponseData['AttendanceHistory'] = SerializedLogs.data
 
         return Response(ResponseData, status=200)
+    
+    def update(self, request, *args, **kwargs):
+        if not request.user.IsAdmin and 'IsAdmin' in request.data:
+            return Response({"Error": "You do not have permission to change admin status."}, status=403)
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        if not request.user.IsAdmin and 'IsAdmin' in request.data:
+            return Response({"Error": "You do not have permission to change admin status."}, status=403)
+        return super().partial_update(request, *args, **kwargs)
 
 
 class AttendanceLogViewSet(viewsets.ModelViewSet):
