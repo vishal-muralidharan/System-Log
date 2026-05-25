@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
+from django.utils import timezone
 from .models import Employee, AttendanceLog
 from .serializers import EmployeeSerializer, AttendanceSerializer
 
@@ -23,7 +24,7 @@ class AttendanceLogViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['POST']) # Marks the Login of Employees
-    def mark_attendance(self, request):
+    def login(self, request):
         Status = request.data.get('WorkStatus', 'In-Office')
 
         NewLog = AttendanceLog.objects.create(
@@ -32,4 +33,23 @@ class AttendanceLogViewSet(viewsets.ModelViewSet):
         )
 
         SerializedData = self.get_serializer(NewLog)
-        return Response(SerializedData, status=201)
+        return Response(SerializedData.data, status=201)
+    
+    @action(detail=False, methods=['POST']) # Marks the Logout of Employees
+    def logout(self, request):
+        Date = timezone.now().date()
+        
+        CloseLog = AttendanceLog.objects.filter(
+            EmployeeRef=request.user,
+            LoginTime__date=Date,
+            LogoutTime__isnull=True
+        ).first()
+
+        if CloseLog:
+            CurrentTime = timezone.now()
+            CloseLog.LogoutTime = CurrentTime
+            CloseLog.save()
+
+            return Response({"LogoutTime": CurrentTime}, status=200)
+        
+        return Response({"Error": "No valid attendance login for today"}, status=404)
