@@ -16,8 +16,7 @@ const Home = () => {
           const Logs = Response.data
 
           if (Logs.length > 0) {
-            console.log(Logs)
-            const LatestLog = Logs[0]
+            const LatestLog = Logs[Logs.length - 1]
 
             const LogDate = new Date(LatestLog.LoginTime).toLocaleDateString()
             const Today = new Date().toLocaleDateString()
@@ -37,7 +36,6 @@ const Home = () => {
       }
 
       fetchTodayStatus()
-      console.log(AttendanceData)
     }, [])
 
     const HandleClockIn = async () => {
