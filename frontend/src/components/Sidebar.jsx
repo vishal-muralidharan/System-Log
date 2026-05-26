@@ -1,7 +1,6 @@
 import React from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import '../css/Sidebar.css';
-import AxiosInstance from '../api/axios';
 
 const Sidebar = () => {
     const NavigateTo = useNavigate()
