@@ -1,15 +1,24 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import '../css/Sidebar.css';
 
 const Sidebar = () => {
     const NavigateTo = useNavigate()
-    const [Active, SetActive] = useState('Home')
 
-    const HandleLogout =    () => {
-            localStorage.removeItem('access_token')
-            localStorage.removeItem('refresh_token')
-            NavigateTo('/login')
+    const [Active, SetActive] = useState(() => {
+        const savedTab = localStorage.getItem("activeTab");
+        return savedTab ? savedTab : "Home";
+    });
+
+    useEffect(() => {
+        localStorage.setItem("activeTab", Active);
+    }, [Active]);
+
+    const HandleLogout = () => {
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
+        localStorage.setItem("activeTab", "Home");
+        NavigateTo('/login')
     }
 
     return (

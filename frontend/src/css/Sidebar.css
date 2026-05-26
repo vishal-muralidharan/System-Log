@@ -1,10 +1,10 @@
 .sidebar-style {
-    background-color: #deeefe;
+    background-color: #90909093;
     height: 84vh;
     border-radius: 20px;
     margin: 25px 10px 0 10px;
     width: 22vw;
-    border: 4px solid black;
+    padding: 4px;
 }
 
 .sidebar-items {
@@ -36,7 +36,7 @@
 }
 
 .list-item:hover {
-    background-color: #bfc0c2;
+    background-color: #3d3e41;
 }
 
 .logout-item {
@@ -47,15 +47,15 @@
     font-size: 18px;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
-    color: #ff4444;
-    background-color:   #ede0dd;
+    color: #000000;
+    background-color: #d04f4f;
 }
 
 .logout-item:hover {
-    background-color: #fed4ca;
+    background-color: #fa4949;
 }
 
 .active {
-    background-color: #a2c1e4;
+    background-color: #313131;
 }
 

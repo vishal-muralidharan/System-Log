@@ -1,14 +1,18 @@
 .overall-container {
     font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: #334155;
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.852);
+    margin: 0;
+    height: 100vh;
 }
 
 .dashboard-title {
-    margin: 15px 0 0px 0;
+    padding: 15px 0 0px 0;
     font-size: 36px;
     font-weight: 700;
-    color: #1E293B;
+    color: #ffffff;
     text-align: center;
+    margin: 0;
 }
 
 .data-container {

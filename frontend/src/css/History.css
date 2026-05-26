@@ -29,13 +29,13 @@ td:last-child {
 }
 
 .leave { 
-    background-color: rgb(251, 200, 200); 
+    background-color: rgb(127, 23, 23); 
 }
 
 .office { 
-    background-color: rgb(203, 251, 200); 
+    background-color: rgb(23, 127, 51); 
 }
 
 .wfh { 
-    background-color: rgb(251, 242, 200); 
+    background-color: rgb(127, 111, 23); 
 }
