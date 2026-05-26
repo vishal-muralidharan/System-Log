@@ -1,0 +1,47 @@
+.condition {
+    margin: 50px;
+    font-size: 18px;
+}
+
+.condition1 > form {
+    display: flex;
+    flex-direction: column;
+    width: 20vw;
+}
+
+.condition1 > form > button {
+    padding: 10px 0px;
+    background-color: rgb(208, 217, 248);
+    font-size: 15px;
+    border-radius: 5px;
+    border: none;
+    margin: 5px;
+}
+
+.condition1 > form > select {
+    padding: 10px 0px;
+    background-color: rgb(25, 16, 84);
+    font-size: 15px;
+    border-radius: 5px;
+    border: none;
+    margin: 15px 5px;
+    color: white;
+    text-align: center;
+}
+
+.condition2 > button {
+    padding: 10px 60px;
+    background-color: rgb(208, 217, 248);
+    font-size: 15px;
+    border-radius: 5px;
+    border: none;
+    margin: 25px 5px;
+}
+
+.condition2 > h2, .condition3 > h2 {
+    margin-bottom: 40px;
+}
+
+.condition2 > h4, .condition3 > h4 {
+    margin: 15px 5px;
+}
