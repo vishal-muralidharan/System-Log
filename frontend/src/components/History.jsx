@@ -61,7 +61,9 @@ const FormatDate = (IsoString) => {
         </thead>
         <tbody>
           {HistoryData.map((Data) => (
-            <tr key={Data.LogId}>
+            <tr key={Data.LogId} 
+            className={`${Data.WorkStatus === 'Leave' ? 
+            'leave' : (Data.WorkStatus === 'In-Office' ? 'office': 'wfh')}`}>
               <td>{Data.LogId}</td>
               <td>{FormatDate(Data.LoginTime)}</td>
               <td>{Data.WorkStatus}</td>
