@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import '../Home.css';
+import '../css/Home.css';
 import axiosInstance from '../api/axios';
 
 const Home = () => {

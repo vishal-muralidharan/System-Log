@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, Link } from 'react-router-dom';
-import '../Dashboard.css';
+import '../css/Dashboard.css';
 import Sidebar from "./Sidebar";
 import Home from "./Home";
 
