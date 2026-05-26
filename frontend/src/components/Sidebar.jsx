@@ -6,18 +6,10 @@ import AxiosInstance from '../api/axios';
 const Sidebar = () => {
     const NavigateTo = useNavigate()
 
-    const HandleLogout = async () => {
-        try {
-            await AxiosInstance.post('attendance/logout')
-        }
-        catch (LogoutErr) {
-            console.error(LogoutErr)
-        }
-        finally {
+    const HandleLogout =    () => {
             localStorage.removeItem('access_token')
             localStorage.removeItem('refresh_token')
             NavigateTo('/login')
-        }
     }
 
     return (
