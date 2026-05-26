@@ -13,8 +13,8 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<Dashboard />}>
                     <Route index element={<Home />} />
-                    <Route path="/dashboard/history" element={<History />} />
-                    <Route path="/dashboard/profile" element={<Profile />} />
+                    <Route path="history" element={<History />} />
+                    <Route path="profile" element={<Profile />} />
                 </Route>
             </Routes>
         </BrowserRouter>
