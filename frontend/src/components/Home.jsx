@@ -13,28 +13,31 @@ const Home = () => {
       const fetchTodayStatus = async () => {
         try {
           const Response = await axiosInstance.get('attendance/?ordering=LoginTime')
-          const Logs = Respone.data
+          const Logs = Response.data
 
           if (Logs.length > 0) {
+            console.log(Logs)
             const LatestLog = Logs[0]
 
             const LogDate = new Date(LatestLog.LoginTime).toLocaleDateString()
             const Today = new Date().toLocaleDateString()
 
-            if (LogDate = Today) {
+            if (LogDate === Today) {
               SetAttendanceData(LatestLog)
             }
           }
         }
         catch (Error) {
           console.error(Error)
-          SetErrorMessage('Could not retrieve current status')
+          SetError('Could not retrieve current status')
         }
         finally {
           SetLoading(false)
         }
       }
+
       fetchTodayStatus()
+      console.log(AttendanceData)
     }, [])
 
     const HandleClockIn = async () => {
@@ -103,7 +106,6 @@ const Home = () => {
                     <form>
                         <label>Select your work status:</label>
                         <select 
-                        defaultValue="Choose your status" 
                         value={Status} 
                         onChange={(e) => SetStatus(e.target.value)}
                         required>

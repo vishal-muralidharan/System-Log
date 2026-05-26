@@ -72,6 +72,12 @@ class AttendanceLogViewSet(viewsets.ModelViewSet):
     search_fields = ['EmployeeRef__EmployeeId']
     ordering_fields = ['LoginTime', 'LogoutTime']
 
+    def get_queryset(self):
+        User = self.request.user
+        if User.IsAdmin:
+            return AttendanceLog.objects.all()
+        return AttendanceLog.objects.filter(EmployeeRef=User)
+
     @action(detail=False, methods=['POST']) # Marks the Login of Employees
     def login(self, request):
         Date = timezone.now().date()
