@@ -7,7 +7,6 @@ const Home = () => {
     const [Status, SetStatus] = useState('In-Office')
     const [Loading, SetLoading] = useState(true)
     const [ErrorMsg, SetError] = useState('')
-    const Condition = 1;
 
     useEffect(() => {
       const fetchTodayStatus = async () => {
@@ -28,7 +27,7 @@ const Home = () => {
         }
         catch (Error) {
           console.error(Error)
-          SetError('Could not retrieve current status')
+          SetError('Could not retrieve current data ')
         }
         finally {
           SetLoading(false)
