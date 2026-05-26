@@ -4,6 +4,22 @@ import '../Sidebar.css';
 import AxiosInstance from '../api/axios';
 
 const Sidebar = () => {
+    const NavigateTo = useNavigate()
+
+    const HandleLogout = async () => {
+        try {
+            await AxiosInstance.post('attendance/logout')
+        }
+        catch (LogoutErr) {
+            console.error(LogoutErr)
+        }
+        finally {
+            localStorage.removeItem('access_token')
+            localStorage.removeItem('refresh_token')
+            NavigateTo('/login')
+        }
+    }
+
     return (
         <div className="sidebar-style">
             <ul className="sidebar-items">
