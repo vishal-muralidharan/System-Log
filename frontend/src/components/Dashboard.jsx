@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import AxiosInstance from '../api/axios';
 import '../Dashboard.css';
 
@@ -16,9 +16,15 @@ const Dashboard = () => {
                 <div className="sidebar-style">
                     <ul className="sidebar-items">
                         <div className="main-items">
-                            <li className="list-item">Home</li>
-                            <li className="list-item">Attendance Details</li>
-                            <li className="list-item">Profile</li>
+                            <li className="list-item">
+                                <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>Home</Link>
+                            </li>
+                            <li className="list-item">
+                                <Link to="/dashboard/history" style={{ textDecoration: 'none', color: 'inherit' }}>Attendance History</Link>
+                            </li>
+                            <li className="list-item">
+                                <Link to="/dashboard/profile" style={{ textDecoration: 'none', color: 'inherit' }}>Profile</Link>
+                            </li>
                         </div>
                         <div>
                             <li className="logout-item">Logout</li>
@@ -33,5 +39,6 @@ const Dashboard = () => {
         </div>
     );
 }
+
 
 export default Dashboard;
