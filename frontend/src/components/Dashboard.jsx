@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Outlet } from 'react-router-dom';
 import '../css/Dashboard.css';
 import Sidebar from "./Sidebar";
 import Home from "./Home";
@@ -16,7 +16,7 @@ const Dashboard = () => {
             <div className="data-container">
                 <Sidebar />
                 <div className="container-style">
-                    <Home />
+                    <Outlet />
                 </div>
             </div>
         </div>
