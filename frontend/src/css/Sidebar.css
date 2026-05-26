@@ -36,7 +36,7 @@
 }
 
 .list-item:hover {
-    background-color: #a2c1e4;
+    background-color: #bfc0c2;
 }
 
 .logout-item {
@@ -52,5 +52,9 @@
 
 .logout-item:hover {
     background-color: #fed4ca;
+}
+
+.active {
+    background-color: #a2c1e4;
 }
 
