@@ -1,3 +1,17 @@
 .outer {
     margin: 30px 50px;
 }
+
+table {
+    width: 63vw;
+    margin: 5px 10px;
+}
+
+th {
+    font-size: 18px;
+}
+
+th, td {
+    text-align: center;
+    padding: 10px 10px;
+}

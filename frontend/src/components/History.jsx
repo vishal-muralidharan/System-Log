@@ -34,9 +34,16 @@ const History = () => {
       return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
 
-  const FormatDate = () => {
-    return new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-  };
+const FormatDate = (IsoString) => {
+        if (!IsoString) return '--';
+        return new Date(IsoString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    };
+
+  if (Loading) {
+    return (
+      <h2 className='condition loading'>Loading your history...</h2>
+    )
+  }
 
   return (
     <div className='outer'>
@@ -45,19 +52,23 @@ const History = () => {
       <table>
         <thead>
           <tr>
-            <th>Employee ID</th>
+            <th>Log ID</th>
+            <th>Date</th>
             <th>Status</th>
             <th>Login Time</th>
             <th>Logout Time</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Hello</td>
-            <td>Hello</td>
-            <td>Hello</td>
-            <td>Hello</td>
-          </tr>
+          {HistoryData.map((Data) => (
+            <tr key={Data.LogId}>
+              <td>{Data.LogId}</td>
+              <td>{FormatDate(Data.LoginTime)}</td>
+              <td>{Data.WorkStatus}</td>
+              <td>{FormatTime(Data.LoginTime)}</td>
+              <td>{Data.WorkStatus == 'Leave' ? '-' : FormatTime(Data.LogoutTime)}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

@@ -83,10 +83,6 @@ const Home = () => {
         return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     };
 
-    const FormatDate = () => {
-        return new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-    };
-
     if (Loading) {
       return (
         <h2 className='condition loading'>Loading your status...</h2>
