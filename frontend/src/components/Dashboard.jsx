@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import '../Dashboard.css';
 import Sidebar from "./Sidebar";
+import Home from "./Home";
 
 const Dashboard = () => {
     return (
@@ -15,7 +16,7 @@ const Dashboard = () => {
             <div className="data-container">
                 <Sidebar />
                 <div className="container-style">
-
+                    <Home />
                 </div>
             </div>
         </div>
