@@ -1,0 +1,91 @@
+.profile-container {
+    margin: 50px;
+}
+
+.profile-title {
+    color: #ffffff;
+    margin-bottom: 5px;
+    margin-top: 0;
+}
+
+.profile-card {
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    max-width: 500px;
+    color: #ffffff;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    background-color: #c7c6c6;
+    color: #292929;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 35px;
+}
+
+.profile-badge {
+    display: inline-block;
+    padding: 12px 18px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+.profile-label {
+    font-size: 16px;
+    color: #d0d0d0;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+}
+
+.profile-value {
+    font-size: 18px;
+    color: #bbbbbb;
+    font-weight: 500;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+}
+
+.profile-value.no-border {
+    border-bottom: none;
+}
+
+.badge-admin {
+    background-color: #FEF3C7;
+    color: #92400E;
+}
+
+.badge-standard {
+    background-color: #F1F5F9;
+    color: #475569;
+}
+
+.status-active {
+    color: #10B981;
+    font-weight: bold;
+}
+
+.status-inactive {
+    color: #EF4444;
+    font-weight: bold;
+}
+
+.error-message {
+    color: #EF4444;
+    margin-bottom: 15px;
+}
+
+.loading-text {
+    padding: 40px;
+    color: #c3c3c3;
+}
