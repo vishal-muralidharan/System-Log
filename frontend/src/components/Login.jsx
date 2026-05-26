@@ -45,7 +45,7 @@ const Login = () => {
 
   const FormBoxStyle = {
         backgroundColor: '#FFFFFF',
-        padding: '40px 50px',
+        padding: '50px 50px 70px 50px',
         width: '360px',
         borderRadius: '12px',
         boxShadow: '0 10px 25px rgba(0, 0, 0, 0.05)', 
@@ -70,7 +70,7 @@ const Login = () => {
   const ButtonStyle = {
         width: '100%',
         padding: '14px',
-        marginTop: '10px',
+        marginTop: '25px',
         backgroundColor: '#334155', 
         color: '#FFFFFF',
         border: 'none',
@@ -119,7 +119,7 @@ const Login = () => {
                 value={EmployeeId}
                 onChange={(Event) => SetEmployeeId(Event.target.value)}
                 style={InputStyle}
-                placeholder="e.g. EMP0002"
+                placeholder="e.g. EMP0001"
                 required
             />
             

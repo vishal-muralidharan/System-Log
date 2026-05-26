@@ -126,11 +126,12 @@ const Home = () => {
             ) : (
                 <div className='condition condition3'>
                     {/* Condition 3: Log-in and Log-out completed for the day */}
-                    <h2>You have marked both your Log-in and Log-out</h2>
+                    {!(AttendanceData.WorkStatus === 'Leave') && <h2>You have marked both your Log-in and Log-out</h2>}
+                    {(AttendanceData.WorkStatus === 'Leave') && <h2>Your Leave has been marked</h2>}
                     <h3>Login Time: {FormatTime(AttendanceData.LoginTime)}</h3>
                     {!(AttendanceData.WorkStatus === 'Leave') && <h3>Logout Time: {FormatTime(AttendanceData.LogoutTime)}</h3>}
                     <h3>Status: {AttendanceData.WorkStatus}</h3>
-                    <h2>Great job! See you tomorrow!</h2>
+                    {!(AttendanceData.WorkStatus === 'Leave') && <h2>Great job!</h2>}<h2>See you tomorrow!</h2>
                 </div>            
             )}
         </>
