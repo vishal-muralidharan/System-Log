@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AxiosInstance from '../api/axios'
+import axiosInstance from '../api/axios'
 
 const Login = () => {
     const [EmployeeId, SetEmployeeId] = useState('')
@@ -9,28 +9,37 @@ const Login = () => {
     const [IsLoading, SetIsLoading] = useState(false)
     const NavigateTo = useNavigate()
 
-  const HandleSubmit = async (Event) => {
+    const HandleSubmit = async (Event) => {
         Event.preventDefault()
         SetErrorMessage('')
         SetIsLoading(true)
 
-    try {
-        const LoginResponse = await AxiosInstance.post('auth/login/', {
+        try {
+        const LoginResponse = await axiosInstance.post('auth/login/', {
             EmployeeId: EmployeeId,
             password: Password
         })
 
         localStorage.setItem('access_token', LoginResponse.data.access)
         localStorage.setItem('refresh_token', LoginResponse.data.refresh)
-        AxiosInstance.defaults.headers.Authorization = `Bearer ${LoginResponse.data.access}`
+        axiosInstance.defaults.headers.Authorization = `Bearer ${LoginResponse.data.access}`
 
-        NavigateTo('/dashboard')
-    } catch (ErrorObj) {
-        SetErrorMessage('Invalid credentials. Please try again.')
-    } finally {
-        SetIsLoading(false)
+        const ProfileResponse = await axiosInstance.get('employees/')
+        const UserProfile = ProfileResponse.data[0]
+        console.log(UserProfile)
+
+        if (UserProfile && UserProfile.IsAdmin) {
+            NavigateTo('/admin')
+        } else {
+            NavigateTo('/dashboard')
+        }
+
+        } catch (ErrorObj) {
+            SetErrorMessage('Invalid credentials. Please try again.')
+        } finally {
+            SetIsLoading(false)
+        }
     }
-  }
 
   
   const ContainerStyle = {
