@@ -11,11 +11,11 @@ const Home = () => {
     useEffect(() => {
       const fetchTodayStatus = async () => {
         try {
-          const Response = await axiosInstance.get('attendance/?ordering=LoginTime')
+          const Response = await axiosInstance.get('attendance/?ordering=-LoginTime')
           const Logs = Response.data
 
           if (Logs.length > 0) {
-            const LatestLog = Logs[Logs.length - 1]
+            const LatestLog = Logs[0]
 
             const LogDate = new Date(LatestLog.LoginTime).toLocaleDateString()
             const Today = new Date().toLocaleDateString()

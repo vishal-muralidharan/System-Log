@@ -34,10 +34,10 @@ const History = () => {
       return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
 
-const FormatDate = (IsoString) => {
+  const FormatDate = (IsoString) => {
         if (!IsoString) return '--';
         return new Date(IsoString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-    };
+  };
 
   if (Loading) {
     return (
@@ -68,7 +68,7 @@ const FormatDate = (IsoString) => {
               <td>{FormatDate(Data.LoginTime)}</td>
               <td>{Data.WorkStatus}</td>
               <td>{FormatTime(Data.LoginTime)}</td>
-              <td>{Data.WorkStatus == 'Leave' ? '-' : FormatTime(Data.LogoutTime)}</td>
+              <td>{Data.LogoutTime === null ? 'Unmarked' : (Data.WorkStatus === 'Leave' ? '-' : FormatTime(Data.LogoutTime))}</td>
             </tr>
           ))}
         </tbody>
