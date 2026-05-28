@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import '../css/History.css';
+import '../css/Employee.css';
 import axiosInstance from '../api/axios';
 
 const AdminEmployees = () => {
   const [EmployeeData, SetEmployeeData] = useState(null)
   const [Loading, SetLoading] = useState(true)
   const [ErrorMsg, SetError] = useState('')
+  const [Search, SetSearch] = useState('')
+  const [Project, SetProject] = useState('')
 
   useEffect(() => {
       const fetchEmployeeData = async () => {
@@ -28,7 +30,26 @@ const AdminEmployees = () => {
       fetchEmployeeData()
     }, []
   )
-  
+
+  const HandleDelete = async (ID) => {
+    if (!window.confirm('ATTENTION! Are you sure you want to delete the user?'))
+        return
+
+    try {
+        await axiosInstance.delete(`employees/${ID}/`)
+        SetEmployeeData(Prev => Prev.filter(Log => Log.id != ID))
+    }
+    catch (Error) {
+        console.error(Error)
+        SetError('FAILED: Could not delete employee')
+    }
+  }
+
+  const FilteredEmployees = EmployeeData ? EmployeeData.filter (Emp => {
+    const SafeEmployeeId = (Emp.EmployeeId || "").toLowerCase()
+    const SafeProject = (Emp.ProjectInvolved || "").toLowerCase()
+    return SafeEmployeeId.includes(Search.toLowerCase()) && SafeProject.includes(Project.toLowerCase())
+  }) : []
 
   const FormatTime = (isoString) => {
     if (!isoString) return '--:--:--';
@@ -48,23 +69,44 @@ const AdminEmployees = () => {
 
   return (
     <div className='outer'>
-      <h2>Employee Data</h2>
+      <div className='search'>
+        <div className='search-field'>
+          <label>Employee ID:</label>
+          <input 
+            type='text' 
+            placeholder='Search Employee ID:' 
+            value={Search} 
+            onChange={(e) => SetSearch(e.target.value)}
+          />
+        </div>
+        <div className='search-field'>
+          <label>Projects: </label>
+          <input 
+            type='text' 
+            placeholder='Search Project:' 
+            value={Project} 
+            onChange={(e) => SetProject(e.target.value)}
+          />
+        </div>
+      </div>
 
       <table>
         <thead>
           <tr>
             <th>Employee ID</th>
             <th>Project</th>
-            <th>IsActive</th>
+            <th>Active</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {EmployeeData.map((Data) => (
+          {FilteredEmployees.map((Data) => (
             (!Data.IsAdmin) && (
-            <tr key={Data.id}>
+            <tr key={Data.id} className={Data.IsActive ? 'active-emp' : 'not-active-emp'}>
               <td>{Data.EmployeeId}</td>
               <td>{Data.ProjectInvolved}</td>
               <td>{Data.IsActive ? 'Yes' : 'No'}</td>
+              <td><button onClick={() => HandleDelete(Data.id)}>Delete</button></td>
             </tr>
           )))}
         </tbody>

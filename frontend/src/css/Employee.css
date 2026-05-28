@@ -1,7 +1,3 @@
-.outer {
-    margin: 30px 50px;
-}
-
 table {
     width: 63vw;
     margin: 5px 10px;
@@ -28,20 +24,12 @@ td:last-child {
     border-bottom-right-radius: 10px;
 }
 
-.leave { 
+.not-active-emp { 
     background-color: rgb(127, 23, 23); 
 }
 
-.office { 
+.active-emp { 
     background-color: rgb(23, 127, 51); 
-}
-
-.wfh { 
-    background-color: rgb(127, 111, 23); 
-}
-
-.client-office { 
-    background-color: rgb(23, 59, 127); 
 }
 
 button {
