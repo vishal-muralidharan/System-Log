@@ -28,6 +28,19 @@ const AdminLogs = () => {
     }, []
   )
   
+  const HandleDelete = async (ID) => {
+    if (!window.confirm('You are about to permanently delete a record. Are you sure?'))
+      return
+
+    try {
+      axiosInstance.delete(`/attendance/${ID}/`)
+      SetHistoryData(Prev => Prev.filter(Logs => Logs.LogId !== ID))
+    }
+    catch (Error) {
+      console.error(Error)
+      SetError('Could not delete Log Data')
+    }
+  }
 
   const FormatTime = (isoString) => {
     if (!isoString) return '--:--:--';
@@ -58,19 +71,22 @@ const AdminLogs = () => {
             <th>Status</th>
             <th>Login Time</th>
             <th>Logout Time</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {HistoryData.map((Data) => (
             <tr key={Data.LogId} 
             className={`${Data.WorkStatus === 'Leave' ? 
-            'leave' : (Data.WorkStatus === 'In-Office' ? 'office': 'wfh')}`}>
+            'leave' : (Data.WorkStatus === 'In-Office' ? 'office': 
+            (Data.WorkStatus === 'Client Office' ? 'client-office': 'wfh'))}`}>
               <td>{Data.LogId}</td>
               <td>{Data.EmployeeStringId}</td>
               <td>{FormatDate(Data.LoginTime)}</td>
               <td>{Data.WorkStatus}</td>
               <td>{FormatTime(Data.LoginTime)}</td>
               <td>{Data.LogoutTime === null ? 'Unmarked' : (Data.WorkStatus === 'Leave' ? '-' : FormatTime(Data.LogoutTime))}</td>
+              <td><button onClick={() => HandleDelete(Data.LogId)}>Delete</button></td>
             </tr>
           ))}
         </tbody>

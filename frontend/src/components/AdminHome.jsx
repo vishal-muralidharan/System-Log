@@ -64,13 +64,14 @@ const AdminHome = () => {
           {HistoryData.map((Data) => {
             return (Today === new Date(Data.LoginTime).toLocaleDateString()) && (
                 <tr key={Data.LogId} 
-                    className={`${Data.WorkStatus === 'Leave' ? 
-                    'leave' : (Data.WorkStatus === 'In-Office' ? 'office': 'wfh')}`}>
-                <td>{Data.EmployeeStringId}</td>
-                <td>{Data.LogId}</td>
-                <td>{Data.WorkStatus}</td>
-                <td>{FormatTime(Data.LoginTime)}</td>
-                <td>{Data.LogoutTime === null ? 'Unmarked' : (Data.WorkStatus === 'Leave' ? '-' : FormatTime(Data.LogoutTime))}</td>
+                className={`${Data.WorkStatus === 'Leave' ? 
+                'leave' : (Data.WorkStatus === 'In-Office' ? 'office': 
+                (Data.WorkStatus === 'Client Office' ? 'client-office': 'wfh'))}`}>
+                  <td>{Data.EmployeeStringId}</td>
+                  <td>{Data.LogId}</td>
+                  <td>{Data.WorkStatus}</td>
+                  <td>{FormatTime(Data.LoginTime)}</td>
+                  <td>{Data.LogoutTime === null ? 'Unmarked' : (Data.WorkStatus === 'Leave' ? '-' : FormatTime(Data.LogoutTime))}</td>
                 </tr>
             );
             })}

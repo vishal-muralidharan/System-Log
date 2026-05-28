@@ -106,6 +106,7 @@ const Home = () => {
                             <option value="In-Office">In-Office</option>
                             <option value="Work From Home">Work From Home</option>
                             <option value="Leave">Leave</option>
+                            <option value="Client Office">Client Office</option>
                         </select>
                         <button type='submit' onClick={HandleClockIn}>Mark Login</button>
                     </form>
