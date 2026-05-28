@@ -31,17 +31,22 @@ const AdminEmployees = () => {
     }, []
   )
 
-  const HandleDelete = async (ID) => {
-    if (!window.confirm('ATTENTION! Are you sure you want to delete the user?'))
+  const HandleDelete = async (ID, CurrentStatus) => {
+    const ActionText = CurrentStatus ? 'deactivate' : 'activate';
+
+    if (!window.confirm(`ATTENTION! Are you sure you want to ${ActionText} the user?`))
         return
 
     try {
-        await axiosInstance.delete(`employees/${ID}/`)
-        SetEmployeeData(Prev => Prev.filter(Log => Log.id != ID))
+        await axiosInstance.patch(`employees/${ID}/`)
+
+        SetEmployeeData(Prev => Prev.map(Log => 
+          Log.id === ID ? {...Log, IsActive: !CurrentStatus} : Log
+        ))
     }
     catch (Error) {
         console.error(Error)
-        SetError('FAILED: Could not delete employee')
+        SetError(`FAILED: Could not ${ActionText} employee`)
     }
   }
 
@@ -106,7 +111,9 @@ const AdminEmployees = () => {
               <td>{Data.EmployeeId}</td>
               <td>{Data.ProjectInvolved}</td>
               <td>{Data.IsActive ? 'Yes' : 'No'}</td>
-              <td><button onClick={() => HandleDelete(Data.id)}>Delete</button></td>
+              <td><button onClick={() => HandleDelete(Data.id, Data.IsActive)}>
+                    {Data.IsActive ? 'Deactivate' : 'Activate'}
+                  </button></td>
             </tr>
           )))}
         </tbody>
