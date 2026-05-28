@@ -69,11 +69,21 @@ const AdminHome = () => {
                 (Data.WorkStatus === 'Client Office' ? 'client-office': 'wfh'))}`}>
                   <td>{Data.EmployeeStringId}</td>
                   <td>{Data.LogId}</td>
-                  <td>{Data.WorkStatus}</td>
-                  <td>{FormatTime(Data.LoginTime)}</td>
-                  <td>{Data.LogoutTime === null ? 'Unmarked' : (Data.WorkStatus === 'Leave' ? '-' : FormatTime(Data.LogoutTime))}</td>
+                  <td>{Data.WorkStatus}</td>  
+                  {Data.WorkStatus === 'Leave' ? (
+                      <td colSpan={2}>{FormatTime(Data.LoginTime)}</td>
+                  ) : (
+                      <>
+                          <td>{FormatTime(Data.LoginTime)}</td>
+                          {Data.LogoutTime === null ? (
+                              <td>Unmarked</td>
+                          ) : (
+                              <td>{FormatTime(Data.LogoutTime)}</td> 
+                          )}
+                      </>
+                  )}
                 </tr>
-            );
+                );
             })}
         </tbody>
       </table>

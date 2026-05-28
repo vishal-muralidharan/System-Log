@@ -38,7 +38,11 @@ const AdminEmployees = () => {
         return
 
     try {
-        await axiosInstance.patch(`employees/${ID}/`)
+        await axiosInstance.patch(`employees/${ID}/`, 
+          {
+            IsActive: !CurrentStatus
+          }
+        )
 
         SetEmployeeData(Prev => Prev.map(Log => 
           Log.id === ID ? {...Log, IsActive: !CurrentStatus} : Log
