@@ -131,9 +131,7 @@ class AttendanceLogViewSet(viewsets.ModelViewSet):
         return Response({"Error": "No open shift found for today. (Note: Previous days cannot be closed today)"}, status=404)
 
 
-User = get_user_model() # Points safely to your Employee model
-
 class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all() 
+    queryset = Employee.objects.all() 
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
