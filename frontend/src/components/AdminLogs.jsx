@@ -6,6 +6,8 @@ const AdminLogs = () => {
   const [HistoryData, SetHistoryData] = useState(null)
   const [Loading, SetLoading] = useState(true)
   const [ErrorMsg, SetError] = useState('')
+  const [Search, SetSearch] = useState('')
+  const [Filter, SetFilter] = useState('')
 
   useEffect(() => {
       const fetchHistoryData = async () => {
@@ -60,7 +62,16 @@ const AdminLogs = () => {
 
   return (
     <div className='outer'>
-      <h2>Complete Log History</h2>
+      <div>
+          <input 
+            type='text' 
+            placeholder='Search Employee ID' 
+            value={Search} 
+            onChange={(e) => SetSearch(e.target.value)}
+          />
+          <label>Logs before:</label>
+          <input type='date' value={Filter} onChange={(e) => SetFilter(e.target.value)} />
+      </div>
 
       <table>
         <thead>
