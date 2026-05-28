@@ -4,6 +4,9 @@
     background-color: rgba(0, 0, 0, 0.852);
     margin: 0;
     height: 100vh;
+    overflow: hidden;
+    display: flex;             
+    flex-direction: column;
 }
 
 .dashboard-title {
@@ -16,15 +19,16 @@
 }
 
 .data-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    flex: 1;    
+    display: flex;               
+    overflow: hidden;          
+    padding-bottom: 25px;
 }
 
 .container-style {
-    height: 84vh;
     border-radius: 20px;
     margin: 25px 10px 0 10px;
-    width: 75vw;
-    border: 4px solid
+    border: 4px solid;
+    flex: 1;
+    overflow-y: auto;
 }
