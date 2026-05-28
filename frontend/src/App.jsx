@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './components/Login'
+import Signup from './components/Signup'
 import Dashboard from './components/Dashboard'
 import Home from './components/Home'
 import History from './components/History'
@@ -15,6 +16,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Navigate to="/login" replace />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
                 <Route path="/dashboard" element={<Dashboard />}>
                     <Route index element={<Home />} />
                     <Route path="history" element={<History />} />

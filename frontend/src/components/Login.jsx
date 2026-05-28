@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axiosInstance from '../api/axios';
 import '../css/Login.css';
 
@@ -89,6 +89,10 @@ const Login = () => {
                         {IsLoading ? 'Signing in...' : 'Sign In'}
                     </button>
                 </form>
+                <div style={{ marginTop: '20px', textAlign: 'center', fontSize: '14px' }}>
+                    <span>Don't have an account? </span>
+                    <Link to="/signup" className='sign-up' style={{ textDecoration: 'none' }}>Sign Up</Link>
+                </div>
             </div>
         </div>
     );
