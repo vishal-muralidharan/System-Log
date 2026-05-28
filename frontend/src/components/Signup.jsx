@@ -4,7 +4,6 @@ import axiosInstance from '../api/axios';
 import '../css/Signup.css';
 
 const Signup = () => {
-    // New State for Names
     const [FirstName, SetFirstName] = useState('');
     const [LastName, SetLastName] = useState('');
     const [ProjectInvolved, SetProjectInvolved] = useState('');
@@ -28,31 +27,29 @@ const Signup = () => {
 
         SetIsLoading(true);
 
-        // Auto-generate a secure 5-digit Employee ID
-        const GeneratedID = 'EMP' + Math.floor(10000 + Math.random() * 90000);
-
         try {
-            await axiosInstance.post('auth/register/', {
-                EmployeeId: GeneratedID,
-                password: Password,
+            const response = await axiosInstance.post('auth/register/', {
+                FirstName: FirstName,
+                LastName: LastName,
                 ProjectInvolved: ProjectInvolved,
-                // Passing names in case your backend is configured to accept them
-                first_name: FirstName, 
-                last_name: LastName    
+                password: Password,
+                password_confirm: ConfirmPassword
             });
 
-            // Display the new ID to the user so they can log in!
-            SetSuccessMessage(`Success! Your Employee ID is: ${GeneratedID}. Redirecting...`);
+            const EmployeeID = response.data.EmployeeId;
+
+            SetSuccessMessage(`Success! Your Employee ID is: ${EmployeeID}. Contact Administrator for Approval`);
             
             setTimeout(() => {
                 NavigateTo('/login');
-            }, 4000); // Give them 4 seconds to read their new ID before redirecting
+            }, 4000);
 
-        } catch (ErrorObj) {
-            if (ErrorObj.response && ErrorObj.response.data) {
-                SetErrorMessage(JSON.stringify(ErrorObj.response.data));
+        } catch (error) {
+            if (error.response && error.response.data) {
+                const firstErrorField = Object.values(error.response.data)[0];
+                SetErrorMessage(firstErrorField[0]); 
             } else {
-                SetErrorMessage('Registration failed. Please try again.');
+                SetErrorMessage("An unexpected error occurred. Please try again.");
             }
         } finally {
             SetIsLoading(false);
@@ -63,14 +60,13 @@ const Signup = () => {
         <div className="signup-container">
             <div className="outer-wrapper">
                 <div className="signup-form-box">
-                    <h2 className="signup-title">Employee Onboarding</h2>
-                    <p className="signup-subtitle">Enter your details to generate your credentials.</p>
+                    <h2 className="signup-title">Welcome</h2>
+                    <p className="signup-subtitle">Enter your details.</p>
                     
                     {ErrorMessage && <div className="signup-error">{ErrorMessage}</div>}
                     {SuccessMessage && <div className="signup-success">{SuccessMessage}</div>}
 
                     <form onSubmit={HandleSubmit}>
-                        
                         <div className="name-row">
                             <div className="name-col">
                                 <label className="signup-label">First Name</label>
@@ -79,7 +75,7 @@ const Signup = () => {
                                     value={FirstName} 
                                     onChange={(E) => SetFirstName(E.target.value)} 
                                     className="signup-input" 
-                                    placeholder="Jane"
+                                    placeholder="Vishal"
                                     required 
                                 />
                             </div>
@@ -90,19 +86,19 @@ const Signup = () => {
                                     value={LastName} 
                                     onChange={(E) => SetLastName(E.target.value)} 
                                     className="signup-input" 
-                                    placeholder="Doe"
+                                    placeholder="M"
                                     required 
                                 />
                             </div>
                         </div>
 
-                        <label className="signup-label">Project / Department</label>
+                        <label className="signup-label">Project</label>
                         <input 
                             type="text" 
                             value={ProjectInvolved} 
                             onChange={(E) => SetProjectInvolved(E.target.value)} 
                             className="signup-input standalone" 
-                            placeholder="e.g. Engineering"
+                            placeholder="e.g. BitHab, Teno"
                         />
 
                         <label className="signup-label">Create Password</label>
@@ -111,7 +107,7 @@ const Signup = () => {
                             value={Password} 
                             onChange={(E) => SetPassword(E.target.value)} 
                             className="signup-input standalone" 
-                            placeholder="••••••••"
+                            placeholder="Enter your passwword"
                             required 
                         />
 
@@ -121,12 +117,12 @@ const Signup = () => {
                             value={ConfirmPassword} 
                             onChange={(E) => SetConfirmPassword(E.target.value)} 
                             className="signup-input standalone" 
-                            placeholder="••••••••"
+                            placeholder="Re-enter the password"
                             required 
                         />
 
                         <button type="submit" disabled={IsLoading || SuccessMessage !== ''} className="signup-button">
-                            {IsLoading ? 'Generating ID...' : 'Complete Registration'}
+                            {IsLoading ? 'Creating Account' : 'Register'}
                         </button>
                     </form>
 

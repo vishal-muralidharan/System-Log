@@ -22,6 +22,27 @@ axiosInstance.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+const HandleRegistration = async (e) => {
+    e.preventDefault();
+
+    try {
+        const payload = {
+            FirstName: firstName,
+            LastName: lastName,
+            ProjectInvolved: project,
+            password: password,
+            password_confirm: confirmPass
+        }
+
+        const response = await axiosInstance.post('auth/register/', payload)
+        
+        console.log("Registration Successful!", response.data)
+
+    } catch (error) {
+        console.error("Registration failed", error.response.data)
+    }
+}
+
 axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {

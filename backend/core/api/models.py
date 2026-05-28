@@ -20,7 +20,7 @@ class Employee(AbstractBaseUser, PermissionsMixin):
     LastName = models.CharField(max_length=50)
     ProjectInvolved = models.CharField(max_length=100)
     IsAdmin = models.BooleanField(default=False)
-    IsActive = models.BooleanField(default=True)
+    IsActive = models.BooleanField(default=False)
 
     objects = EmployeeManager()
 

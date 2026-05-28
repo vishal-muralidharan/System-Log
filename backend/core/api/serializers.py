@@ -77,7 +77,8 @@ class RegisterSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Employee
-        fields = ('FirstName', 'LastName', 'ProjectInvolved', 'password', 'password_confirm')
+        fields = ('EmployeeId', 'FirstName', 'LastName', 'ProjectInvolved', 'password', 'password_confirm')
+        read_only_fields = ('EmployeeId',)
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password_confirm']:
