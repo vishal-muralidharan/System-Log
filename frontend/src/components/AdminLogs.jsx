@@ -44,6 +44,21 @@ const AdminLogs = () => {
     }
   }
 
+  const FilteredLogs = HistoryData ? HistoryData.filter(Log => {
+    const SafeSearch = (Search || "").toLowerCase()
+    const SearchMatch = Log.EmployeeStringId.includes(SafeSearch)
+
+    let DateMatch = true
+    if (Filter && Log.LoginTime) {
+      const LogDate = new Date(Log.LoginTime).setHours(0, 0, 0, 0)
+      const SelectedDate = new Date(Filter).setHours(0, 0, 0, 0)
+
+      DateMatch = LogDate <= SelectedDate
+    }
+
+    return SearchMatch && DateMatch
+  }) : []
+
   const FormatTime = (isoString) => {
     if (!isoString) return '--:--:--';
       return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -62,15 +77,24 @@ const AdminLogs = () => {
 
   return (
     <div className='outer'>
-      <div>
+      <div className='search'>
+        <div className='search-field'>
+          <label>Employee ID:</label>
           <input 
             type='text' 
             placeholder='Search Employee ID' 
             value={Search} 
             onChange={(e) => SetSearch(e.target.value)}
           />
-          <label>Logs before:</label>
-          <input type='date' value={Filter} onChange={(e) => SetFilter(e.target.value)} />
+        </div>
+        <div className='search-field'>
+          <label>Logs on or before:</label>
+          <input 
+            type='date' 
+            value={Filter} 
+            onChange={(e) => SetFilter(e.target.value)} 
+          />
+        </div>
       </div>
 
       <table>
@@ -86,7 +110,7 @@ const AdminLogs = () => {
           </tr>
         </thead>
         <tbody>
-          {HistoryData.map((Data) => (
+          {FilteredLogs.map((Data) => (
             <tr key={Data.LogId} 
             className={`${Data.WorkStatus === 'Leave' ? 
             'leave' : (Data.WorkStatus === 'In-Office' ? 'office': 

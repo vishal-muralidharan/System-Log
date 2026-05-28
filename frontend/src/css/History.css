@@ -50,3 +50,25 @@ button {
     padding: 5px 15px;
     border-radius: 5px;
 }
+
+.search {
+    display: flex;
+}
+
+.search-field {
+    margin: 7px 0px;
+    margin: 0 20px 0 20px;
+}
+
+.search-field > label {
+    margin: 0 15px 0 0;
+}
+
+.search-field > input {
+    border: 0;
+    background-color: rgba(255, 255, 255, 0.775);
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin: 5px 0;
+    width: 200px;
+}
