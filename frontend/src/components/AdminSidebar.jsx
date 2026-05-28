@@ -25,14 +25,14 @@ const AdminSidebar = () => {
         <div className="sidebar-style">
             <ul className="sidebar-items">
                 <div className="main-items">
-                    <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => SetActive('Home')}>
+                    <Link to="/admin" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => SetActive('Home')}>
                         <li className={`list-item ${Active === 'Home' ? "active" : ""}`}>Home</li>
                     </Link>
-                    <Link to="/dashboard/history" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => SetActive('History')}>
-                        <li className={`list-item ${Active === 'History' ? "active" : ""}`}>Attendance History</li>
+                    <Link to="/admin/logs" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => SetActive('History')}>
+                        <li className={`list-item ${Active === 'History' ? "active" : ""}`}>Log Attendance History</li>
                     </Link>
-                    <Link to="/dashboard/profile" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => SetActive('Profile')}>
-                        <li className={`list-item ${Active === 'Profile' ? "active" : ""}`}>Profile</li>
+                    <Link to="/admin/employees" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => SetActive('Profile')}>
+                        <li className={`list-item ${Active === 'Profile' ? "active" : ""}`}>Employees</li>
                     </Link>
                     
                 </div>

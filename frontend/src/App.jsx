@@ -5,6 +5,9 @@ import Home from './components/Home'
 import History from './components/History'
 import Profile from './components/Profile'
 import AdminDashboard from './components/AdminDashboard'
+import AdminHome from './components/AdminHome'
+import AdminLogs from './components/AdminLogs'
+import AdminEmployees from './components/AdminEmployees'
 
 function App() {
     return (
@@ -18,9 +21,9 @@ function App() {
                     <Route path="profile" element={<Profile />} />
                 </Route>
                 <Route path="/admin" element={<AdminDashboard />}>
-                    <Route index element={<Home />} />
-                    <Route path="history" element={<History />} />
-                    <Route path="profile" element={<Profile />} />
+                    <Route index element={<AdminHome />} />
+                    <Route path="logs" element={<AdminLogs />} />
+                    <Route path="employees" element={<AdminEmployees />} />
                 </Route>
             </Routes>
         </BrowserRouter>
