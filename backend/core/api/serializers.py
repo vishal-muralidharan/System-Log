@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Employee, AttendanceLog
+from django.contrib.auth import get_user_model
 
 class EmployeeSerializer(serializers.ModelSerializer):
     # Password is write-only so that it is not exposed to GET Methods.
@@ -68,3 +69,31 @@ class AttendanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = AttendanceLog
         fields = ['LogId', 'EmployeeRef', 'EmployeeStringId', 'LoginTime', 'LogoutTime', 'WorkStatus']
+
+
+User = get_user_model()
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+    password_confirm = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+    
+    class Meta:
+        model = User
+        fields = ('FirstName', 'LastName', 'ProjectInvolved', 'password', 'password_confirm')
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password_confirm']:
+            raise serializers.ValidationError({"password": "Password fields didn't match."})
+        return attrs
+
+    def create(self, validated_data):
+        validated_data.pop('password_confirm')
+        
+        # Calls your updated manager function without passing an ID manually
+        user = User.objects.create_user(
+            FirstName=validated_data.get('FirstName', ''),
+            LastName=validated_data.get('LastName', ''),
+            ProjectInvolved=validated_data.get('ProjectInvolved', 'Unassigned'),
+            password=validated_data['password']
+        )
+        return user

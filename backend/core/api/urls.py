@@ -1,4 +1,5 @@
 from django.urls import path, include
+from .views import RegisterView
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import EmployeeViewSet, AttendanceLogViewSet
@@ -12,4 +13,5 @@ urlpatterns = [
     path('', include(ApiRouter.urls)),
     path('auth/login/', TokenObtainPairView.as_view(), name='TokenObtainPair'),
     path('auth/refresh/', TokenRefreshView.as_view(), name='TokenRefresh'),
+    path('auth/register/', RegisterView.as_view(), name='auth_register'),
 ]

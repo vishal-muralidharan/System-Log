@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status, filters
+from rest_framework import viewsets, generics, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -6,6 +6,9 @@ from rest_framework.decorators import action
 from django.utils import timezone
 from .models import Employee, AttendanceLog
 from .serializers import EmployeeSerializer, AttendanceSerializer
+from rest_framework.permissions import AllowAny
+from .serializers import RegisterSerializer
+from django.contrib.auth import get_user_model
 
 class EmployeeViewSet(viewsets.ModelViewSet):
     """
@@ -126,3 +129,11 @@ class AttendanceLogViewSet(viewsets.ModelViewSet):
             return Response({"LogoutTime": CurrentTime}, status=200)
         
         return Response({"Error": "No open shift found for today. (Note: Previous days cannot be closed today)"}, status=404)
+
+
+User = get_user_model() # Points safely to your Employee model
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all() 
+    permission_classes = (AllowAny,)
+    serializer_class = RegisterSerializer

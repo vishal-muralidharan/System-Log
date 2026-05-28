@@ -2,9 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 class EmployeeManager(BaseUserManager):
-    def create_user(self, EmployeeId, password=None, **ExtraFields):
-        if not EmployeeId:
-            raise ValueError('EMPLOYEE ID REQUIRED')
+    # Made EmployeeId optional (=None) here so auto-generation works
+    def create_user(self, EmployeeId=None, password=None, **ExtraFields):
         UserInstance = self.model(EmployeeId=EmployeeId, **ExtraFields)
         UserInstance.set_password(password)
         UserInstance.save(using=self._db)
@@ -17,6 +16,8 @@ class EmployeeManager(BaseUserManager):
 
 class Employee(AbstractBaseUser, PermissionsMixin):
     EmployeeId = models.CharField(max_length=50, unique=True, blank=True)
+    FirstName = models.CharField(max_length=50)
+    LastName = models.CharField(max_length=50)
     ProjectInvolved = models.CharField(max_length=100)
     IsAdmin = models.BooleanField(default=False)
     IsActive = models.BooleanField(default=True)
