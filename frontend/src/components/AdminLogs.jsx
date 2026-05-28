@@ -83,9 +83,19 @@ const AdminLogs = () => {
               <td>{Data.LogId}</td>
               <td>{Data.EmployeeStringId}</td>
               <td>{FormatDate(Data.LoginTime)}</td>
-              <td>{Data.WorkStatus}</td>
-              <td>{FormatTime(Data.LoginTime)}</td>
-              <td>{Data.LogoutTime === null ? 'Unmarked' : (Data.WorkStatus === 'Leave' ? '-' : FormatTime(Data.LogoutTime))}</td>
+              <td>{Data.WorkStatus}</td>  
+              {Data.WorkStatus === 'Leave' ? (
+                  <td colSpan={2}>{FormatTime(Data.LoginTime)}</td>
+              ) : (
+                  <>
+                      <td>{FormatTime(Data.LoginTime)}</td>
+                      {Data.LogoutTime === null ? (
+                          <td>Unmarked</td>
+                      ) : (
+                          <td>{FormatTime(Data.LogoutTime)}</td> 
+                      )}
+                  </>
+              )}
               <td><button onClick={() => HandleDelete(Data.LogId)}>Delete</button></td>
             </tr>
           ))}
