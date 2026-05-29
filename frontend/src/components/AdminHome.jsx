@@ -13,7 +13,6 @@ const AdminHome = () => {
         try {
           const Response = await axiosInstance.get('attendance/?ordering=LoginTime')
           const Logs = Response.data
-          console.log(Logs)
           SetHistoryData(Logs)
         }
         catch (Error) {
@@ -28,6 +27,12 @@ const AdminHome = () => {
       fetchHistoryData()
     }, []
   )
+
+  const TodaysLogs =  HistoryData ? HistoryData.filter(Emp => {
+    return (new Date(Emp.LoginTime).toLocaleDateString() === Today)
+  }) : []
+  
+    console.log(TodaysLogs)
   
 
   const FormatTime = (isoString) => {
@@ -48,45 +53,47 @@ const AdminHome = () => {
 
   return (
     <div className='outer'>
-      <h2>Today's Attendance Log ({Today})</h2>
+      {TodaysLogs.length === 0 ? <h2><br />No Logs for Today ({Today})</h2> :
+      <>
+        <h2>Today's Attendance Log ({Today})</h2>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Employee ID</th>
-            <th>Log ID</th>
-            <th>Status</th>
-            <th>Login Time</th>
-            <th>Logout Time</th>
-          </tr>
-        </thead>
-        <tbody>
-          {HistoryData.map((Data) => {
-            return (Today === new Date(Data.LoginTime).toLocaleDateString()) && (
-                <tr key={Data.LogId} 
-                className={`${Data.WorkStatus === 'Leave' ? 
-                'leave' : (Data.WorkStatus === 'In-Office' ? 'office': 
-                (Data.WorkStatus === 'Client Office' ? 'client-office': 'wfh'))}`}>
-                  <td>{Data.EmployeeStringId}</td>
-                  <td>{Data.LogId}</td>
-                  <td>{Data.WorkStatus}</td>  
-                  {Data.WorkStatus === 'Leave' ? (
-                      <td colSpan={2}>{FormatTime(Data.LoginTime)}</td>
-                  ) : (
-                      <>
-                          <td>{FormatTime(Data.LoginTime)}</td>
-                          {Data.LogoutTime === null ? (
-                              <td>Unmarked</td>
-                          ) : (
-                              <td>{FormatTime(Data.LogoutTime)}</td> 
-                          )}
-                      </>
-                  )}
-                </tr>
-                );
-            })}
-        </tbody>
-      </table>
+        <table>
+          <thead>
+            <tr>
+              <th>Employee ID</th>
+              <th>Log ID</th>
+              <th>Status</th>
+              <th>Login Time</th>
+              <th>Logout Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {TodaysLogs.map((Data) => (
+                  <tr key={Data.LogId} 
+                  className={`${Data.WorkStatus === 'Leave' ? 
+                  'leave' : (Data.WorkStatus === 'In-Office' ? 'office': 
+                  (Data.WorkStatus === 'Client Office' ? 'client-office': 'wfh'))}`}>
+                    <td>{Data.EmployeeStringId}</td>
+                    <td>{Data.LogId}</td>
+                    <td>{Data.WorkStatus}</td>  
+                    {Data.WorkStatus === 'Leave' ? (
+                        <td colSpan={2}>{FormatTime(Data.LoginTime)}</td>
+                    ) : (
+                        <>
+                            <td>{FormatTime(Data.LoginTime)}</td>
+                            {Data.LogoutTime === null ? (
+                                <td>Unmarked</td>
+                            ) : (
+                                <td>{FormatTime(Data.LogoutTime)}</td> 
+                            )}
+                        </>
+                    )}
+                  </tr>
+            ))} 
+          </tbody>
+        </table>
+      </>
+      }
     </div>
   )
 }
