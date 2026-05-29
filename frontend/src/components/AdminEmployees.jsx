@@ -70,6 +70,7 @@ const AdminEmployees = () => {
 
     return EmpIDMatch && ProjectMatch && ActiveMatch
   }) : []
+  console.log(FilteredEmployees)
 
   const FormatTime = (isoString) => {
     if (!isoString) return '--:--:--';
@@ -114,7 +115,7 @@ const AdminEmployees = () => {
             value={Active} 
             onChange={(e) => {
                 const Selected = e.target.value;
-                
+
                 if (Selected === "null") SetActive(null);
                 if (Selected === "true") SetActive(true);
                 if (Selected === "false") SetActive(false);
@@ -128,6 +129,7 @@ const AdminEmployees = () => {
         </div>
       </div>
 
+      {FilteredEmployees.length === 0 ? <h2><br />No Matching Records</h2> :
       <table>
         <thead>
           <tr>
@@ -151,6 +153,7 @@ const AdminEmployees = () => {
           )))}
         </tbody>
       </table>
+      }
     </div>
   )
 }
