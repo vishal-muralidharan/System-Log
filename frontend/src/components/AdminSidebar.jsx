@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import '../css/Sidebar.css';
 
 const AdminSidebar = () => {
     const NavigateTo = useNavigate()
     const [Confirm, SetConfirm] = useState(false)
+    const ConfirmRef = useRef(null)
 
     const [Active, SetActive] = useState(() => {
         const savedTab = localStorage.getItem("activeTab");
@@ -14,6 +15,28 @@ const AdminSidebar = () => {
     useEffect(() => {
         localStorage.setItem("activeTab", Active);
     }, [Active]);
+
+    useEffect(() => {
+        const HandleConfirmClick = (event) => {
+            if (ConfirmRef.current && !ConfirmRef.current.contains(event.target)) {
+                SetConfirm(false)
+            }
+        }
+
+        const HandleConfirmScroll = () => {
+            SetConfirm(false)
+        }
+
+        if (Confirm) {
+            document.addEventListener("scroll", HandleConfirmScroll, true)
+            document.addEventListener("mousedown", HandleConfirmClick)
+        }
+
+        return () => {
+            document.removeEventListener("scroll", HandleConfirmScroll, true)
+            document.removeEventListener("mousedown", HandleConfirmClick)
+        }
+    }, [Confirm])
 
     const HandleLogout = () => {
         SetConfirm(false)
@@ -45,7 +68,7 @@ const AdminSidebar = () => {
             </ul>
 
             {Confirm && (
-                <div className='confirmation'>
+                <div className='confirmation' ref={ConfirmRef}>
                     <h4>Click on 'Confirm' to Logout</h4>
                     <div className='buttons'>
                         <button onClick={HandleLogout}>Confirm</button>
