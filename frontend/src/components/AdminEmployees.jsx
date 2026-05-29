@@ -8,6 +8,7 @@ const AdminEmployees = () => {
   const [ErrorMsg, SetError] = useState('')
   const [Search, SetSearch] = useState('')
   const [Project, SetProject] = useState('')
+  const [Active, SetActive] = useState(null)
 
   useEffect(() => {
       const fetchEmployeeData = async () => {
@@ -56,8 +57,18 @@ const AdminEmployees = () => {
 
   const FilteredEmployees = EmployeeData ? EmployeeData.filter (Emp => {
     const SafeEmployeeId = (Emp.EmployeeId || "").toLowerCase()
+    const EmpIDMatch = SafeEmployeeId.includes(Search.toLowerCase())
+
     const SafeProject = (Emp.ProjectInvolved || "").toLowerCase()
-    return SafeEmployeeId.includes(Search.toLowerCase()) && SafeProject.includes(Project.toLowerCase())
+    const ProjectMatch = SafeProject.includes(Project.toLowerCase())
+
+    let ActiveMatch = true
+    if (Active !== null) {
+      ActiveMatch = Emp.IsActive === Active
+    }
+    console.log(Emp.IsActive, Active)
+
+    return EmpIDMatch && ProjectMatch && ActiveMatch
   }) : []
 
   const FormatTime = (isoString) => {
@@ -96,6 +107,24 @@ const AdminEmployees = () => {
             value={Project} 
             onChange={(e) => SetProject(e.target.value)}
           />
+        </div>
+        <div className='search-field'>
+          <label>Employee Active Status:</label>
+          <select 
+            value={Active} 
+            onChange={(e) => {
+                const Selected = e.target.value;
+                
+                if (Selected === "null") SetActive(null);
+                if (Selected === "true") SetActive(true);
+                if (Selected === "false") SetActive(false);
+              }
+            }
+            required>
+                <option value={null}>Show All</option>
+                <option value={true}>Active</option>
+                <option value={false}>Inactive</option>
+          </select>
         </div>
       </div>
 
