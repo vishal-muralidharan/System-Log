@@ -47,33 +47,36 @@ const History = () => {
 
   return (
     <div className='outer'>
-      <h2>Attendance Log History</h2>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Log ID</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Login Time</th>
-            <th>Logout Time</th>
-          </tr>
-        </thead>
-        <tbody>
-          {HistoryData.map((Data) => (
-            <tr key={Data.LogId} 
-            className={`${Data.WorkStatus === 'Leave' ? 
-            'leave' : (Data.WorkStatus === 'In-Office' ? 'office': 
-            (Data.WorkStatus === 'Client Office' ? 'client-office': 'wfh'))}`}>
-              <td>{Data.LogId}</td>
-              <td>{FormatDate(Data.LoginTime)}</td>
-              <td>{Data.WorkStatus}</td>
-              <td>{FormatTime(Data.LoginTime)}</td>
-              <td>{Data.LogoutTime === null ? 'Unmarked' : (Data.WorkStatus === 'Leave' ? '-' : FormatTime(Data.LogoutTime))}</td>
+      {HistoryData.length === 0 ? <h2><br />No Attendance Records Marked yet.</h2>:
+      <div>
+        <h2>Attendance Log History</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Log ID</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Login Time</th>
+              <th>Logout Time</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {HistoryData.map((Data) => (
+              <tr key={Data.LogId} 
+              className={`${Data.WorkStatus === 'Leave' ? 
+              'leave' : (Data.WorkStatus === 'In-Office' ? 'office': 
+              (Data.WorkStatus === 'Client Office' ? 'client-office': 'wfh'))}`}>
+                <td>{Data.LogId}</td>
+                <td>{FormatDate(Data.LoginTime)}</td>
+                <td>{Data.WorkStatus}</td>
+                <td>{FormatTime(Data.LoginTime)}</td>
+                <td>{Data.LogoutTime === null ? 'Unmarked' : (Data.WorkStatus === 'Leave' ? '-' : FormatTime(Data.LogoutTime))}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      }
     </div>
   )
 }

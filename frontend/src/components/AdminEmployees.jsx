@@ -116,13 +116,13 @@ const AdminEmployees = () => {
             onChange={(e) => {
                 const Selected = e.target.value;
 
-                if (Selected === "null") SetActive(null);
+                if (Selected === "") SetActive(null);
                 if (Selected === "true") SetActive(true);
                 if (Selected === "false") SetActive(false);
               }
             }
             required>
-                <option value={null}>Show All</option>
+                <option value=''>Show All</option>
                 <option value={true}>Active</option>
                 <option value={false}>Inactive</option>
           </select>
