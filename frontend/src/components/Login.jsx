@@ -51,14 +51,7 @@ const Login = () => {
         <div className="login-container">
             <div className="login-form-box">
                 
-                <h2 className="login-title">Welcome back</h2>
-                <p className="login-subtitle">Please enter your details to sign in.</p>
-                
-                {ErrorMessage && (
-                    <div className="login-error">
-                        {ErrorMessage}
-                    </div>
-                )}
+                <h2 className="login-title">Welcome back</h2> <br />
                 
                 <form onSubmit={HandleSubmit}>
                     <label className="login-label">Employee ID</label>
@@ -88,6 +81,12 @@ const Login = () => {
                     >
                         {IsLoading ? 'Signing in...' : 'Sign In'}
                     </button>
+
+                    {ErrorMessage && (
+                        <div className="login-error">
+                            {ErrorMessage}
+                        </div>
+                    )}
                 </form>
                 <div style={{ marginTop: '20px', textAlign: 'center', fontSize: '14px' }}>
                     <span>Don't have an account? </span>

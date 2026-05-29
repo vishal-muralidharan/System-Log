@@ -60,8 +60,7 @@ const Signup = () => {
         <div className="signup-container">
             <div className="outer-wrapper">
                 <div className="signup-form-box">
-                    <h2 className="signup-title">Welcome</h2>
-                    <p className="signup-subtitle">Enter your details.</p>
+                    <h2 className="signup-title">Welcome to Logs</h2><br />
                     
                     {ErrorMessage && <div className="signup-error">{ErrorMessage}</div>}
                     {SuccessMessage && <div className="signup-success">{SuccessMessage}</div>}
