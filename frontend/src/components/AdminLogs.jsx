@@ -8,6 +8,7 @@ const AdminLogs = () => {
   const [ErrorMsg, SetError] = useState('')
   const [Search, SetSearch] = useState('')
   const [Filter, SetFilter] = useState('')
+  const [StatusFilter, SetStatusFilter] = useState('')
 
   useEffect(() => {
       const fetchHistoryData = async () => {
@@ -56,7 +57,10 @@ const AdminLogs = () => {
       DateMatch = LogDate <= SelectedDate
     }
 
-    return SearchMatch && DateMatch
+    const SafeStatus = (StatusFilter || "")
+    const StatusMatch = Log.WorkStatus.includes(SafeStatus)
+
+    return SearchMatch && DateMatch && StatusMatch
   }) : []
 
   const FormatTime = (isoString) => {
@@ -94,6 +98,19 @@ const AdminLogs = () => {
             value={Filter} 
             onChange={(e) => SetFilter(e.target.value)} 
           />
+        </div>
+        <div className='search-field'>
+          <label>Logs Status:</label>
+          <select 
+            value={StatusFilter} 
+            onChange={(e) => SetStatusFilter(e.target.value)}
+            required>
+                <option value="">Show All</option>
+                <option value="In-Office">In-Office</option>
+                <option value="Work From Home">Work From Home</option>
+                <option value="Leave">Leave</option>
+                <option value="Client Office">Client Office</option>
+          </select>
         </div>
       </div>
 
