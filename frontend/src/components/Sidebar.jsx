@@ -4,6 +4,7 @@ import '../css/Sidebar.css';
 
 const Sidebar = () => {
     const NavigateTo = useNavigate()
+    const [Confirm, SetConfirm] = useState(false)
 
     const [Active, SetActive] = useState(() => {
         const savedTab = localStorage.getItem("activeTab");
@@ -15,11 +16,13 @@ const Sidebar = () => {
     }, [Active]);
 
     const HandleLogout = () => {
+        SetConfirm(false)
+
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
         localStorage.setItem("activeTab", "Home");
         NavigateTo('/login')
-    }
+    }        
 
     return (
         <div className="sidebar-style">
@@ -37,9 +40,18 @@ const Sidebar = () => {
                     
                 </div>
                 <div>
-                    <li className="logout-item" onClick={HandleLogout}>Logout</li>
+                    <li className="logout-item" onClick={() => SetConfirm(true)}>Logout</li>
                 </div>
             </ul>
+            {Confirm && (
+                <div className='confirmation'>
+                    <h4>Click on 'Confirm' to Logout</h4>
+                    <div className='buttons'>
+                        <button onClick={HandleLogout}>Confirm</button>
+                        <button onClick={() => SetConfirm(false)}>Cancel</button>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
