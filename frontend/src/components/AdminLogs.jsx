@@ -114,6 +114,7 @@ const AdminLogs = () => {
         </div>
       </div>
 
+      {FilteredLogs.length === 0 ? <h2><br />No Matching Logs</h2> :
       <table>
         <thead>
           <tr>
@@ -153,6 +154,7 @@ const AdminLogs = () => {
           ))}
         </tbody>
       </table>
+      }
     </div>
   )
 }
