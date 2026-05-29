@@ -32,9 +32,6 @@ const AdminHome = () => {
     return (new Date(Emp.LoginTime).toLocaleDateString() === Today)
   }) : []
   
-    console.log(TodaysLogs)
-  
-
   const FormatTime = (isoString) => {
     if (!isoString) return '--:--:--';
       return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });

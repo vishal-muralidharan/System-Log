@@ -27,7 +27,6 @@ const Login = () => {
 
             const ProfileResponse = await axiosInstance.get('employees/');
             const UserProfile = ProfileResponse.data[0];
-            console.log(UserProfile);
 
             if (UserProfile) {
                 if (UserProfile.IsActive) {

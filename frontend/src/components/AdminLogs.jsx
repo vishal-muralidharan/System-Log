@@ -15,7 +15,6 @@ const AdminLogs = () => {
         try {
           const Response = await axiosInstance.get('attendance/?ordering=LoginTime')
           const Logs = Response.data
-          console.log(Logs)
           SetHistoryData(Logs)
         }
         catch (Error) {

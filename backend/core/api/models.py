@@ -28,7 +28,7 @@ class Employee(AbstractBaseUser, PermissionsMixin):
 
     @property
     def is_staff(self):
-        return self.IsAdmin
+        return not self.IsAdmin
         
     @property
     def is_superuser(self):

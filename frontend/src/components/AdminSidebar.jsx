@@ -58,7 +58,7 @@ const AdminSidebar = () => {
                         <li className={`list-item ${Active === 'History' ? "active" : ""}`}>Log Attendance History</li>
                     </Link>
                     <Link to="/admin/employees" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => SetActive('Profile')}>
-                        <li className={`list-item ${Active === 'Profile' ? "active" : ""}`}>Employees</li>
+                        <li className={`list-item ${Active === 'Profile' ? "active" : ""}`}>Employees Data</li>
                     </Link>
                     
                 </div>

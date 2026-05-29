@@ -8,7 +8,7 @@ const AdminEmployees = () => {
   const [ErrorMsg, SetError] = useState('')
   const [Search, SetSearch] = useState('')
   const [Project, SetProject] = useState('')
-  const [Active, SetActive] = useState(null)
+  const [Active, SetActive] = useState('')
 
   useEffect(() => {
       const fetchEmployeeData = async () => {
@@ -63,14 +63,12 @@ const AdminEmployees = () => {
     const ProjectMatch = SafeProject.includes(Project.toLowerCase())
 
     let ActiveMatch = true
-    if (Active !== null) {
+    if (Active !== '') {
       ActiveMatch = Emp.IsActive === Active
     }
-    console.log(Emp.IsActive, Active)
 
-    return EmpIDMatch && ProjectMatch && ActiveMatch
+    return EmpIDMatch && ProjectMatch && ActiveMatch && !Emp.IsAdmin
   }) : []
-  console.log(FilteredEmployees)
 
   const FormatTime = (isoString) => {
     if (!isoString) return '--:--:--';
@@ -116,15 +114,15 @@ const AdminEmployees = () => {
             onChange={(e) => {
                 const Selected = e.target.value;
 
-                if (Selected === "") SetActive(null);
+                if (Selected === "all") SetActive('');
                 if (Selected === "true") SetActive(true);
                 if (Selected === "false") SetActive(false);
               }
             }
             required>
-                <option value=''>Show All</option>
-                <option value={true}>Active</option>
-                <option value={false}>Inactive</option>
+                <option value='all'>Show All</option>
+                <option value='true'>Active</option>
+                <option value='false'>Inactive</option>
           </select>
         </div>
       </div>
