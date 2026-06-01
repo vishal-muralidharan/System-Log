@@ -88,7 +88,6 @@ const EmployeeHome = () => {
         <View style={styles.container}>
             {ErrorMsg ? <Text style={styles.error}>{ErrorMsg}</Text> : null}
 
-            {/* Condition 1: Log-in not done for the day */}
             {!AttendanceData ? (
               <View>
                 <Text style={styles.headerText}>You have not marked Log-in for the day</Text>
@@ -101,6 +100,7 @@ const EmployeeHome = () => {
                                 selectedValue={Status}
                                 onValueChange={(itemValue) => SetStatus(itemValue)}
                                 style={styles.picker}
+                                itemStyle={{ color: 'white' }}
                                 dropdownIconColor="white"
                                 mode="dropdown"
                             >
@@ -118,8 +118,6 @@ const EmployeeHome = () => {
                 </View>
               </View>
             ) : AttendanceData && !AttendanceData.LogoutTime ? (
-                
-            /* Condition 2: Log-in completed but Log-out not done for the day */
               <View>
                 <Text style={[styles.headerText]}>
                     You have not marked your Log-out for the day
@@ -134,15 +132,13 @@ const EmployeeHome = () => {
                 </View>
               </View>
             ) : (
-                
-            /* Condition 3: Log-in and Log-out completed for the day */
                 <View >
                   {AttendanceData.WorkStatus !== 'Leave' ? (
                         <Text style={[styles.headerText]}>You have marked both your Log-in and Log-out</Text>
                     ) : (
                         <Text style={[styles.headerText]}>Your Leave has been marked</Text>
                     )}
-                  <View style={styles.conditionBox}>                   
+                  <View style={styles.conditionBox}>                  
                     <Text style={styles.dataTextLarge}>Login Time: {FormatTime(AttendanceData.LoginTime)}</Text>
                     
                     {AttendanceData.WorkStatus !== 'Leave' && (
@@ -206,16 +202,14 @@ const styles = StyleSheet.create({
     },
 
     pickerWrapper: {
-        backgroundColor: 'rgb(25, 16, 84)',
+        backgroundColor: 'rgb(16, 10, 59)',
         borderRadius: 5,
         marginVertical: 15,
         marginHorizontal: 5,
-        overflow: 'hidden',
     },
 
     picker: {
-        color: 'white',
-        height: 50,
+        color: '#ffffff',
         width: '100%',
         textAlign: 'center',
     },
