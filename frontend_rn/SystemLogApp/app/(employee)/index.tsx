@@ -124,7 +124,7 @@ const EmployeeHome = () => {
                 </Text>
                 <View style={styles.conditionBox}>
                     <Text style={styles.dataTextFirst}>Login Time: {FormatTime(AttendanceData.LoginTime)}</Text>
-                    <Text style={styles.dataText}>Status: {AttendanceData.WorkStatus}</Text>
+                    <Text style={styles.dataTextLarge}>Status: {AttendanceData.WorkStatus}</Text>
                     
                     <TouchableOpacity style={styles.logoutButton} onPress={HandleClockOut}>
                         <Text style={styles.primaryButtonText}>Mark Logout</Text>
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     },
 
     dataTextFirst: {
-        fontSize: 16,
+        fontSize: 20,
         fontWeight: '600',
         marginBottom: 8,
         color: '#333',

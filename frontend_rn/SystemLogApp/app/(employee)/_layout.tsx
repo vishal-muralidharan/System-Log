@@ -4,7 +4,6 @@ import { Drawer } from 'expo-router/drawer'
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer'
 import { useRouter } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import axiosInstance from '../../src/api/axios'
 
 function CustomDrawerContent(props) {
     const router = useRouter()
@@ -41,9 +40,9 @@ export default function EmployeeLayout() {
         <Drawer
             drawerContent={(props) => <CustomDrawerContent {...props} />}
             screenOptions={{
-                headerStyle: { backgroundColor: 'rgb(25, 16, 84)' },
+                headerStyle: { backgroundColor: 'rgb(19, 12, 63)' },
                 headerTintColor: '#fff', 
-                drawerActiveTintColor: 'rgb(25, 16, 84)',
+                drawerActiveTintColor: 'rgb(12, 8, 35)',
                 drawerInactiveTintColor: '#333',
             }}
         >
@@ -68,6 +67,7 @@ const styles = StyleSheet.create({
     },
     bottomSection: {
         padding: 20,
+        paddingTop: 35,
         borderTopWidth: 1,
         borderTopColor: '#e2e8f0',
         marginBottom: 20,
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     },
     logoutText: {
         color: 'white',
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
     }
 })
