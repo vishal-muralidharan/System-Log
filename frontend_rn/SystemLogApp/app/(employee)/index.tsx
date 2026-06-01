@@ -1,79 +1,79 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import axiosInstance from '../../src/api/axios';
+import React, { useEffect, useState } from 'react'
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { Picker } from '@react-native-picker/picker'
+import axiosInstance from '../../src/api/axios'
 
 const EmployeeHome = () => {
-    const [AttendanceData, SetAttendanceData] = useState(null);
-    const [Status, SetStatus] = useState('In-Office');
-    const [Loading, SetLoading] = useState(true);
-    const [ErrorMsg, SetError] = useState('');
+    const [AttendanceData, SetAttendanceData] = useState(null)
+    const [Status, SetStatus] = useState('In-Office')
+    const [Loading, SetLoading] = useState(true)
+    const [ErrorMsg, SetError] = useState('')
 
     useEffect(() => {
         const fetchTodayStatus = async () => {
             try {
-                const Response = await axiosInstance.get('attendance/?ordering=-LoginTime');
-                const Logs = Response.data;
+                const Response = await axiosInstance.get('attendance/?ordering=-LoginTime')
+                const Logs = Response.data
 
                 if (Logs.length > 0) {
-                    const LatestLog = Logs[0];
-                    const LogDate = new Date(LatestLog.LoginTime).toLocaleDateString();
-                    const Today = new Date().toLocaleDateString();
+                    const LatestLog = Logs[0]
+                    const LogDate = new Date(LatestLog.LoginTime).toLocaleDateString()
+                    const Today = new Date().toLocaleDateString()
 
                     if (LogDate === Today) {
-                        SetAttendanceData(LatestLog);
+                        SetAttendanceData(LatestLog)
                     }
                 }
             } catch (Error) {
-                console.error(Error);
-                SetError('Could not retrieve current data');
+                console.error(Error)
+                SetError('Could not retrieve current data')
             } finally {
-                SetLoading(false);
+                SetLoading(false)
             }
-        };
+        }
 
-        fetchTodayStatus();
-    }, []);
+        fetchTodayStatus()
+    }, [])
 
     const HandleClockIn = async () => {
-        SetLoading(true);
-        SetError('');
+        SetLoading(true)
+        SetError('')
 
         try {
             const Response = await axiosInstance.post('attendance/login/', {
                 WorkStatus: Status
-            });
-            SetAttendanceData(Response.data);
+            })
+            SetAttendanceData(Response.data)
         } catch (Error) {
-            console.error(Error);
-            SetError('Error in marking Log-In Data');
+            console.error(Error)
+            SetError('Error in marking Log-In Data')
         } finally {
-            SetLoading(false);
+            SetLoading(false)
         }
-    };
+    }
 
     const HandleClockOut = async () => {
-        SetLoading(true);
-        SetError('');
+        SetLoading(true)
+        SetError('')
 
         try {
-            const Response = await axiosInstance.post('attendance/logout/');
+            const Response = await axiosInstance.post('attendance/logout/')
             SetAttendanceData(prev => ({
                 ...prev,
                 LogoutTime: Response.data.LogoutTime
-            }));
+            }))
         } catch (Error) {
-            console.error(Error);
-            SetError('Error in marking Log-Out Data');
+            console.error(Error)
+            SetError('Error in marking Log-Out Data')
         } finally {
-            SetLoading(false);
+            SetLoading(false)
         }
-    };
+    }
 
     const FormatTime = (isoString) => {
-        if (!isoString) return '--:--:--';
-        return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    };
+        if (!isoString) return '--:--:--'
+        return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    }
 
     if (Loading) {
         return (
@@ -81,7 +81,7 @@ const EmployeeHome = () => {
                 <ActivityIndicator size="large" color="rgb(25, 16, 84)" />
                 <Text style={styles.loading}>Loading your status...</Text>
             </View>
-        );
+        )
     }
 
     return (
@@ -90,12 +90,12 @@ const EmployeeHome = () => {
 
             {/* Condition 1: Log-in not done for the day */}
             {!AttendanceData ? (
+              <View>
+                <Text style={styles.headerText}>You have not marked Log-in for the day</Text>
                 <View style={styles.conditionBox}>
-                    <Text style={styles.headerText}>You have not marked Log-in for the day</Text>
-                    
                     <View style={styles.formContainer}>
                         <Text style={styles.label}>Select your work status:</Text>
-                        
+
                         <View style={styles.pickerWrapper}>
                             <Picker
                                 selectedValue={Status}
@@ -116,21 +116,23 @@ const EmployeeHome = () => {
                         </TouchableOpacity>
                     </View>
                 </View>
+              </View>
             ) : AttendanceData && !AttendanceData.LogoutTime ? (
                 
             /* Condition 2: Log-in completed but Log-out not done for the day */
+              <View>
+                <Text style={[styles.headerText]}>
+                    You have not marked your Log-out for the day
+                </Text>
                 <View style={styles.conditionBox}>
-                    <Text style={[styles.headerText, { marginBottom: 40 }]}>
-                        You have not marked your Log-out for the day
-                    </Text>
-                    
-                    <Text style={styles.dataText}>Login Time: {FormatTime(AttendanceData.LoginTime)}</Text>
+                    <Text style={styles.dataTextFirst}>Login Time: {FormatTime(AttendanceData.LoginTime)}</Text>
                     <Text style={styles.dataText}>Status: {AttendanceData.WorkStatus}</Text>
                     
                     <TouchableOpacity style={styles.logoutButton} onPress={HandleClockOut}>
                         <Text style={styles.primaryButtonText}>Mark Logout</Text>
                     </TouchableOpacity>
                 </View>
+              </View>
             ) : (
                 
             /* Condition 3: Log-in and Log-out completed for the day */
@@ -156,8 +158,8 @@ const EmployeeHome = () => {
                 </View>
             )}
         </View>
-    );
-};
+    )
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -177,7 +179,7 @@ const styles = StyleSheet.create({
     conditionBox: {
         alignItems: 'center',
         width: '100%',
-        backgroundColor: '#c3cfeb',
+        backgroundColor: '#e3e8f2',
         padding: 20,
         borderRadius: 10
     },
@@ -192,7 +194,8 @@ const styles = StyleSheet.create({
 
     formContainer: {
         width: '100%',
-        marginTop: 20,
+        margin: 20,
+        paddingVertical: 10
     },
 
     label: {
@@ -219,7 +222,7 @@ const styles = StyleSheet.create({
 
     primaryButton: {
         backgroundColor: 'rgb(208, 217, 248)',
-        paddingVertical: 10,
+        paddingVertical: 15,
         margin: 5,
         borderRadius: 5,
         alignItems: 'center',
@@ -227,12 +230,13 @@ const styles = StyleSheet.create({
 
     logoutButton: {
         backgroundColor: 'rgb(208, 217, 248)',
-        paddingVertical: 10,
+        paddingVertical: 15,
         paddingHorizontal: 60,
         marginVertical: 25,
         marginHorizontal: 5,
         borderRadius: 5,
         alignItems: 'center',
+        width: '90%'
     },
 
     primaryButtonText: {
@@ -246,6 +250,14 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginBottom: 8,
         color: '#333',
+    },
+
+    dataTextFirst: {
+        fontSize: 16,
+        fontWeight: '600',
+        marginBottom: 8,
+        color: '#333',
+        marginTop: 25
     },
 
     dataTextLarge: {
@@ -272,7 +284,7 @@ const styles = StyleSheet.create({
         marginTop: 15,
         fontSize: 16,
     },
-    
+
     error: {
         color: 'rgb(212, 44, 44)',
         fontSize: 18,
@@ -280,6 +292,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         fontWeight: 'bold',
     },
-});
+})
 
-export default EmployeeHome;
+export default EmployeeHome
