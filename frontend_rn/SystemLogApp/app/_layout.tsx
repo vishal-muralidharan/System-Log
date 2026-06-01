@@ -1,24 +1,50 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { useEffect, useState } from 'react';
+import { View, ActivityIndicator } from 'react-native';
+import { Slot, useRouter, useSegments } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const segments = useSegments();
+  const router = useRouter();
+  const [isReady, setIsReady] = useState(false);
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+  useEffect(() => {
+    const enforceAuthGuard = async () => {
+      try {
+        const token = await AsyncStorage.getItem('access_token');
+        const profileStr = await AsyncStorage.getItem('user_profile');
+        const inAuthGroup = segments[0] === '(auth)';
+
+        if (!token) {
+
+          if (!inAuthGroup) router.replace('/(auth)/login');
+        } else if (profileStr) {
+
+          const profile = JSON.parse(profileStr);
+          if (profile.IsAdmin && segments[0] !== '(admin)') {
+            router.replace('/(admin)');
+            
+          } else if (!profile.IsAdmin && segments[0] !== '(employee)') {
+            router.replace('/(employee)');
+          }
+        }
+      } catch (e) {
+        console.error("Routing error", e);
+      } finally {
+        setIsReady(true);
+      }
+    };
+
+    enforceAuthGuard();
+  }, [segments]);
+
+  if (!isReady) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#251054" />
+      </View>
+    );
+  }
+
+  return <Slot />;
 }
