@@ -42,8 +42,9 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Welcome Back</Text>
       <View style={styles.card}>
-        <Text style={styles.title}>Welcome Back</Text>
+        
         <View style={styles.innerCard}>
             <Text style={styles.label}>Username</Text>
             <TextInput 
@@ -97,8 +98,8 @@ const styles = StyleSheet.create({
 
   card: { 
     width: '85%',
-    height: '55%', 
-    padding: 25, 
+    height: '50%', 
+    padding: 5, 
     backgroundColor: '#ffffff', 
     borderRadius: 15, 
     elevation: 3, 
@@ -107,10 +108,10 @@ const styles = StyleSheet.create({
   },
 
   title: { 
-    fontSize: 25, 
+    fontSize: 35, 
     fontWeight: '700', 
     color: '#101d46', 
-    marginBottom: 25 
+    marginBottom: 45 
   },
 
   input: { 
