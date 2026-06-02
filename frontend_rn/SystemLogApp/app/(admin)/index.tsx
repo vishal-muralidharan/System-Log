@@ -1,222 +1,255 @@
-import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
-import axiosInstance from '../../src/api/axios'
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Modal, Pressable } from 'react-native';
+import axiosInstance from '../../src/api/axios';
 
-const AdminHome = () => {
-    const [HistoryData, SetHistoryData] = useState(null)
-    const [Loading, SetLoading] = useState(true)
-    const [ErrorMsg, SetError] = useState('')
-    const Today = new Date().toLocaleDateString()
+export default function AdminHome() {
+  const [HistoryData, SetHistoryData] = useState<any[] | null>(null);
+  const [Loading, SetLoading] = useState(true);
+  const [ErrorMsg, SetError] = useState('');
+  const [SelectedLog, SetSelectedLog] = useState<any | null>(null);
 
-    useEffect(() => {
-        const fetchHistoryData = async () => {
-            try {
-                const Response = await axiosInstance.get('attendance/?ordering=LoginTime')
-                const Logs = Response.data
-                SetHistoryData(Logs)
-            }
-            catch (Error) {
-                console.error(Error)
-                SetError('Could not retrieve current data')
-            }
-            finally {
-                SetLoading(false)
-            }
-        }
+  const Today = new Date().toLocaleDateString();
 
-        fetchHistoryData()
-    }, [])
+  useEffect(() => {
+    const fetchHistoryData = async () => {
+      try {
+        const Response = await axiosInstance.get('attendance/?ordering=LoginTime'); 
+        SetHistoryData(Response.data);
+      } catch (Error) {
+        SetError('Could not retrieve current data'); 
+      } finally {
+        SetLoading(false);
+      }
+    };
 
-    const TodaysLogs = HistoryData ? HistoryData.filter(Emp => {
-        return (new Date(Emp.LoginTime).toLocaleDateString() === Today)
-    }) : []
-    
-    const FormatTime = (isoString) => {
-        if (!isoString) return '--:--:--'
-        return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    fetchHistoryData();
+  }, []);
+
+  const TodaysLogs = HistoryData ? HistoryData.filter((Emp) => {
+    return new Date(Emp.LoginTime).toLocaleDateString() === Today; 
+  }) : [];
+
+  const FormatTime = (isoString: string) => {
+    if (!isoString) return '--:--:--'; 
+    return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }); 
+  };
+
+  const getRowStyle = (status: string) => {
+    switch (status) {
+      case 'Leave': return styles.leaveRow; 
+      case 'In-Office': return styles.officeRow; 
+      case 'Client Office': return styles.clientOfficeRow; 
+      case 'Work From Home': 
+      case 'wfh': return styles.wfhRow; 
+      default: return { backgroundColor: '#ffffff' };
     }
+  };
 
-    const FormatDate = (IsoString) => {
-        if (!IsoString) return '--'
-        return new Date(IsoString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-    }
+  const renderLogCell = ({ item }: any) => (
+    <TouchableOpacity 
+      style={[styles.row, getRowStyle(item.WorkStatus)]}
+      onPress={() => SetSelectedLog(item)}
+    >
+      <Text style={styles.cell}>{item.EmployeeStringId}</Text>
+      <Text style={styles.cell}>{item.WorkStatus}</Text>
+    </TouchableOpacity>
+  );
 
-    // Helper function moved to be a standard function inside the component
-    const getRowStyle = (status) => {
-        switch (status) {
-            case 'Leave': return styles.leaveRow
-            case 'In-Office': return styles.officeRow
-            case 'Client Office': return styles.clientOfficeRow
-            case 'Work From Home': 
-            case 'wfh': return styles.wfhRow
-            default: return {}
-        }
-    }
-
-    if (Loading) {
-        return (
-            <View style={styles.centerContainer}>
-                <ActivityIndicator size="large" color="rgb(25, 16, 84)" />
-                <Text style={styles.loading}>Loading today's logs...</Text>
-            </View>
-        )
-    }
-
+  if (Loading) {
     return (
-        <View style={styles.outer}>
-            {ErrorMsg ? <Text style={styles.errorText}>{ErrorMsg}</Text> : null}
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color="rgb(25, 16, 84)" />
+        <Text style={styles.loadingText}>Loading today's logs...</Text>
+      </View>
+    );
+  }
 
-            {TodaysLogs.length === 0 ? (
-                <Text style={styles.heading}>No Logs for Today ({Today})</Text>
-            ) : (
-                <>
-                    <Text style={styles.heading}>Today's Attendance Log ({Today})</Text>
+  return (
+    <View style={styles.overallContainer}>
+      {ErrorMsg ? <Text style={styles.errorText}>{ErrorMsg}</Text> : null}
 
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                        <View style={styles.table}>
-                            
-                            <View style={styles.headerRow}>
-                                <Text style={styles.headerCell}>Employee ID</Text>
-                                <Text style={styles.headerCell}>Log ID</Text>
-                                <Text style={styles.headerCell}>Status</Text>
-                                <Text style={styles.headerCell}>Login Time</Text>
-                                <Text style={styles.headerCell}>Logout Time</Text>
-                            </View>
+      <Text style={styles.dashboardTitle}>Today's Attendance Log ({Today})</Text>
 
-                            <ScrollView style={styles.tableBody}>
-                                {TodaysLogs.map((Data) => (
-                                    <View 
-                                        key={Data.LogId} 
-                                        style={[styles.row, getRowStyle(Data.WorkStatus)]}
-                                    >
-                                        <Text style={styles.cell}>{Data.EmployeeStringId}</Text>
-                                        <Text style={styles.cell}>{Data.LogId}</Text>
-                                        <Text style={styles.cell}>{Data.WorkStatus}</Text>
-                                        
-                                        {Data.WorkStatus === 'Leave' ? (
-                                            <Text style={[styles.cell, { flex: 2, textAlign: 'center' }]}>
-                                                {FormatTime(Data.LoginTime)}
-                                            </Text>
-                                        ) : (
-                                            <>
-                                                <Text style={styles.cell}>{FormatTime(Data.LoginTime)}</Text>
-                                                <Text style={styles.cell}>
-                                                    {Data.LogoutTime === null ? 'Unmarked' : FormatTime(Data.LogoutTime)}
-                                                </Text>
-                                            </>
-                                        )}
-                                    </View>
-                                ))}
-                            </ScrollView>
-                            
-                        </View>
-                    </ScrollView>
-                </>
-            )}
+      <View style={styles.table}>
+        <View style={styles.headerRow}>
+          <Text style={styles.headerCell}>Employee ID</Text>
+          <Text style={styles.headerCell}>Status</Text>
         </View>
-    )
+
+        <FlatList
+          data={TodaysLogs}
+          keyExtractor={(item) => item.LogId.toString()}
+          renderItem={renderLogCell}
+          ListEmptyComponent={<Text style={styles.emptyText}>No Logs for Today ({Today})</Text>} 
+        />
+      </View>
+
+      {/* Pop-up Modal for Extended Log Details */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={!!SelectedLog}
+        onRequestClose={() => SetSelectedLog(null)}
+        >
+        <View>
+            <View>
+            <Text>Log Details</Text>
+            
+            {SelectedLog && (
+                <View>
+                <Text><Text>Target:</Text> {SelectedLog.EmployeeStringId}</Text>
+                <Text><Text>Status:</Text> {SelectedLog.WorkStatus}</Text>
+                <Text><Text>In:</Text> {FormatTime(SelectedLog.LoginTime)}</Text>
+                <Text>
+                    <Text>Out:</Text> {SelectedLog.LogoutTime ? FormatTime(SelectedLog.LogoutTime) : 'Unmarked'}
+                </Text>
+                </View>
+            )}
+
+            <Pressable onPress={() => SetSelectedLog(null)}>
+                <Text>Close</Text>
+            </Pressable>
+            </View>
+        </View>
+      </Modal>
+    </View>
+  );
 }
 
-export default AdminHome;
-
 const styles = StyleSheet.create({
-    centerContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f8fafc',
-    },
+  overallContainer: { 
+    flex: 1, 
+    backgroundColor: '#fff',
+    padding: 15 
+  },
 
-    loading: {
-        marginTop: 15,
-        fontSize: 16,
-        color: '#333',
-    },
+  dashboardTitle: { 
+    fontSize: 22, 
+    fontWeight: '700', 
+    color: '#000000', 
+    textAlign: 'center', 
+    margin: 20,
+    marginBottom: 30
+  },
+  
+  centerContainer: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: 'rgba(0, 0, 0, 0.852)' 
+  },
 
-    errorText: {
-        color: 'rgb(212, 44, 44)',
-        fontSize: 16,
-        textAlign: 'center',
-        marginBottom: 10,
-        fontWeight: 'bold',
-    },
+  loadingText: { 
+    marginTop: 15, 
+    fontSize: 16, 
+    color: '#ffffff' 
+  },
 
-    outer: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: '#f8fafc',
-    },
-    
-    heading: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#1e3a8a',
-        marginBottom: 20,
-        textAlign: 'center',
-    },
+  errorText: { 
+    color: 'rgb(212, 44, 44)', 
+    fontSize: 16, 
+    textAlign: 'center', 
+    marginBottom: 10, 
+    fontWeight: 'bold' 
+  }, 
 
-    table: {
-        minWidth: 600, 
-        backgroundColor: 'white',
-        borderRadius: 8,
-        overflow: 'hidden',
-        elevation: 2, 
-        shadowColor: '#000', 
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        shadowOffset: { width: 0, height: 2 },
-    },
+  table: { 
+    flex: 1, 
+    backgroundColor: '#fff', 
+    borderRadius: 8, 
+    overflow: 'hidden' 
+  },
 
-    headerRow: {
-        flexDirection: 'row',
-        backgroundColor: 'rgb(25, 16, 84)', 
-        paddingVertical: 12,
-        borderTopLeftRadius: 8,
-        borderTopRightRadius: 8,
-    },
+  headerRow: { 
+    flexDirection: 'row', 
+    backgroundColor: 'rgb(25, 16, 84)',
+    paddingVertical: 22.5 
+  },
 
-    headerCell: {
-        flex: 1,
-        color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
-        fontSize: 14,
-        paddingHorizontal: 5,
-    },
+  headerCell: { 
+    flex: 1, 
+    color: 'white', 
+    fontWeight: 'bold',
+    textAlign: 'center', 
+    fontSize: 18 
+  },
 
-    tableBody: {
-        maxHeight: 400, 
-    },
+  row: { 
+    flexDirection: 'row', 
+    borderBottomWidth: 1, 
+    borderColor: '#e2e8f0', 
+    paddingVertical: 18, 
+    alignItems: 'center' 
+  },
 
-    row: {
-        flexDirection: 'row',
-        borderBottomWidth: 1,
-        borderBottomColor: '#e2e8f0',
-        paddingVertical: 12,
-        alignItems: 'center',
-    },
+  cell: { 
+    flex: 1, 
+    textAlign: 'center', 
+    fontSize: 16, 
+    color: '#000000', 
+    fontWeight: '600' 
+  },
 
-    cell: {
-        flex: 1,
-        textAlign: 'center',
-        fontSize: 14,
-        color: '#333',
-        paddingHorizontal: 5,
-    },
+  leaveRow: { backgroundColor: '#ffb1b1' }, 
+  officeRow: { backgroundColor: '#b8f4cd' }, 
+  wfhRow: { backgroundColor: '#afd3ec' }, 
+  clientOfficeRow: { backgroundColor: '#fef9c3' }, 
 
-    leaveRow: {
-        backgroundColor: '#fee2e2', 
-    },
+  emptyText: { 
+    textAlign: 'center', 
+    marginTop: 30, 
+    fontSize: 16, 
+    color: '#64748b' 
+  },
+  
+  modalOverlay: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: 'rgba(0,0,0,0.6)' 
+  },
 
-    officeRow: {
-        backgroundColor: '#dcfce7',
-    },
+  modalContent: { 
+    width: '80%', 
+    backgroundColor: '#ffffff', 
+    borderRadius: 12, 
+    padding: 25, 
+    elevation: 5 
+  },
 
-    wfhRow: {
-        backgroundColor: '#e0f2fe',
-    },
+  modalTitle: { 
+    fontSize: 22, 
+    fontWeight: 'bold', 
+    marginBottom: 20, 
+    color: 'rgb(25, 16, 84)', 
+    textAlign: 'center' 
+  },
 
-    clientOfficeRow: {
-        backgroundColor: '#fef9c3', 
-    },
-})
+  modalDataWrapper: { 
+    marginBottom: 25 
+  },
+
+  modalText: { 
+    fontSize: 16, 
+    color: '#334155', 
+    marginBottom: 12 
+  },
+
+  boldLabel: { 
+    fontWeight: 'bold', 
+    color: '#0f172a' 
+  },
+
+  closeButton: { 
+    backgroundColor: 'rgb(25, 16, 84)', 
+    padding: 14, 
+    borderRadius: 8, 
+    alignItems: 'center' 
+  },
+
+  closeButtonText: { 
+    color: '#ffffff', 
+    fontWeight: 'bold', 
+    fontSize: 14 
+  }
+});
