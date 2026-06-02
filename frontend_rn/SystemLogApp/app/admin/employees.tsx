@@ -35,7 +35,7 @@ export default function AdminEmployees() {
     }, []
   )
 
-  const HandleDelete = (ID: number, CurrentStatus: string) => {
+  const HandleDelete = (ID: number, CurrentStatus: boolean) => {
     const ActionText = CurrentStatus ? 'deactivate' : 'activate';
 
     Alert.alert(
@@ -113,7 +113,7 @@ export default function AdminEmployees() {
       onPress={() => SetSelectedLog(item)}
     >
       <Text style={styles.cell}>{item.EmployeeStringId}</Text>
-      <Text style={styles.cell}>{item.IsActive}</Text>
+      <Text style={styles.cell}>{item.IsActive ? 'Active' : 'Inactive:' }</Text>
     </TouchableOpacity>
   )
 
@@ -213,33 +213,26 @@ export default function AdminEmployees() {
                 
                 {SelectedLog && (
                 <View style={styles.modalDataWrapper}>
-                    <Text style={styles.modalText}><Text style={styles.boldLabel}>Log ID:</Text> {SelectedLog.LogId}</Text>
-                    <Text style={styles.modalText}><Text style={styles.boldLabel}>Date:</Text> {FormatDate(SelectedLog.LoginTime)}</Text>
                     <Text style={styles.modalText}><Text style={styles.boldLabel}>Employee ID:</Text> {SelectedLog.EmployeeStringId}</Text>
-                    <Text style={styles.modalText}><Text style={styles.boldLabel}>Status:</Text> {SelectedLog.WorkStatus}</Text>
+                    <Text style={styles.modalText}><Text style={styles.boldLabel}>Project:</Text> {FormatDate(SelectedLog.ProjectInvolved)}</Text>
                     
                     <Text style={styles.modalText}><Text style={styles.boldLabel}>
-                        {SelectedLog.WorkStatus === "Leave" ? 'Leave Marked:' : 'Log-in Time:' }
-                    </Text> {FormatTime(SelectedLog.LoginTime)}</Text>
-
-                    {SelectedLog.WorkStatus !== "Leave" && (
-                        <Text style={styles.modalText}>
-                            <Text style={styles.boldLabel}>Log-out Time: </Text> 
-                            {SelectedLog.LogoutTime ? FormatTime(SelectedLog.LogoutTime) : 'Unmarked'}
-                        </Text>
-                    )}
+                        Status:
+                    </Text> {SelectedLog.IsActive ? 'Active' : 'Inactive:' }</Text>
                 </View>
                 )}
                 <View style={styles.buttonContainer}>
                   <Pressable style={styles.closeButton} onPress={() => SetSelectedLog(null)}>
                       <Text style={styles.closeButtonText}>Close</Text>
                   </Pressable>
-                  <Pressable style={styles.deleteButton} onPress={() => HandleDelete(SelectedLog.LogId)}>
-                      <Text style={styles.deleteButtonText}>Delete</Text>
-                  </Pressable>
+                  {SelectedLog.IsActive ? 
+                    <Pressable style={styles.deactivateButton} onPress={() => HandleDelete(SelectedLog.id, SelectedLog.IsActive)}>
+                        <Text style={styles.deactivateButtonText}>Delete</Text>
+                    </Pressable> : 
+                    <Pressable style={styles.activateButton} onPress={() => HandleDelete(SelectedLog.id, SelectedLog.IsActive)}>
+                        <Text style={styles.activateButtonText}>Delete</Text>
+                    </Pressable> }
                 </View>
-                
-                
             </Pressable>
         </Pressable>
       </Modal>
@@ -394,7 +387,22 @@ const styles = StyleSheet.create({
     fontSize: 18 
   },
 
-  deleteButton: { 
+  activateButton: {
+    backgroundColor: 'rgb(126, 19, 19)', 
+    padding: 14, 
+    margin: 10,
+    borderRadius: 10, 
+    alignItems: 'center',
+    width: '45%'
+  }, 
+
+  activateButtonText: {
+    color: '#ffffff', 
+    fontWeight: 'bold', 
+    fontSize: 18
+  },
+
+  deactivateButton: { 
     backgroundColor: 'rgb(126, 19, 19)', 
     padding: 14, 
     margin: 10,
@@ -403,7 +411,7 @@ const styles = StyleSheet.create({
     width: '45%'
   },
 
-  deleteButtonText: { 
+  deactivateButtonText: { 
     color: '#ffffff', 
     fontWeight: 'bold', 
     fontSize: 18 
