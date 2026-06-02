@@ -53,6 +53,13 @@ export default function EmployeeLayout() {
                     title: 'Dashboard' 
                 }} 
             />
+            <Drawer.Screen 
+                name="history" 
+                options={{ 
+                    drawerLabel: 'Attendance History',
+                    title: 'Attendance History' 
+                }} 
+            />
         </Drawer>
     )
 }
