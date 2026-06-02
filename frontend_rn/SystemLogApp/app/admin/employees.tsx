@@ -11,7 +11,7 @@ export default function AdminEmployees() {
 
   const [searchID, setSearchID] = useState('')
   const [searchProject, setSearchProject] = useState('')
-  const [empStatus, setEmpStatus] = useState('')
+  const [empStatus, setEmpStatus] = useState<boolean | null>(null)
 
   useEffect(() => {
     const fetchEmployeeData = async () => {
@@ -83,17 +83,12 @@ export default function AdminEmployees() {
     const ProjectMatch = SafeProject.includes(searchProject.toLowerCase())
 
     let ActiveMatch = true
-    if (empStatus !== '') {
+    if (empStatus !== null) {
       ActiveMatch = Emp.IsActive === empStatus
     }
 
     return EmpIDMatch && ProjectMatch && ActiveMatch && !Emp.IsAdmin
   }) || []
-
-  const FormatTime = (isoString: string) => {
-    if (!isoString) return '--:--:--' 
-    return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) 
-  }
 
   const FormatDate = (isoString: string) => {
     if (!isoString) return '--' 
@@ -102,8 +97,8 @@ export default function AdminEmployees() {
 
   const getRowStyle = (status: boolean) => {
     switch (status) {
-      case true: return styles.leaveRow 
-      case false: return styles.officeRow 
+      case true: return styles.officeRow 
+      case false: return styles.leaveRow 
     }
   }
 
@@ -112,8 +107,8 @@ export default function AdminEmployees() {
       style={[styles.row, getRowStyle(item.IsActive)]}
       onPress={() => SetSelectedLog(item)}
     >
-      <Text style={styles.cell}>{item.EmployeeStringId}</Text>
-      <Text style={styles.cell}>{item.IsActive ? 'Active' : 'Inactive:' }</Text>
+      <Text style={styles.cell}>{item.EmployeeId}</Text>
+      <Text style={styles.cell}>{item.IsActive ? 'Active' : 'Inactive' }</Text>
     </TouchableOpacity>
   )
 
@@ -128,15 +123,17 @@ export default function AdminEmployees() {
 
   const getPillStyle = (status: string) => {
     switch (status) {
-      case 'Active': return styles.pillLeave 
-      case 'Inactive': return styles.pillOffice 
+      case 'Active': return styles.pillOffice
+      case 'Inactive': return styles.pillLeave
+      default: return styles.pill
     }
   }
 
   const getActivePillStyle = (status: string) => {
     switch (status) {
-      case 'Active': return styles.pillLeaveActive
-      case 'Inactive': return styles.pillOfficeActive 
+      case 'Active': return styles.pillOfficeActive
+      case 'Inactive': return styles.pillLeaveActive 
+      default: return styles.pillActive
     }
   }
 
@@ -166,13 +163,14 @@ export default function AdminEmployees() {
         />
         
         <View style={styles.pillContainer}>
+          const empCheckString = {empStatus ? 'Active' : (empStatus !== null ? 'All' : 'Inactive')}
           {statusOptions.map((status) => (
             <TouchableOpacity 
               key={status}
-              style={[getPillStyle(status), empStatus === status && getActivePillStyle(status)]}
-              onPress={() => setEmpStatus(status)}
+              style={[getPillStyle(status), empCheckString === status && getActivePillStyle(status)]}
+              onPress={() => setEmpStatus(status === 'Active' ? true : (status === 'Inactive' ? false : null))}
             >
-              <Text style={[getPillStyle(status), empStatus === status && getActivePillStyle(status)]}>
+              <Text style={[getPillStyle(status), empCheckString === status && getActivePillStyle(status)]}>
                 {status}
               </Text>
             </TouchableOpacity>
@@ -188,7 +186,7 @@ export default function AdminEmployees() {
 
         <FlatList
           data={filteredEmployees}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.id}
           renderItem={renderLogCell}
           ListEmptyComponent={<Text style={styles.emptyText}>No Logs Present</Text>} 
         />
@@ -225,13 +223,14 @@ export default function AdminEmployees() {
                   <Pressable style={styles.closeButton} onPress={() => SetSelectedLog(null)}>
                       <Text style={styles.closeButtonText}>Close</Text>
                   </Pressable>
-                  {SelectedLog.IsActive ? 
-                    <Pressable style={styles.deactivateButton} onPress={() => HandleDelete(SelectedLog.id, SelectedLog.IsActive)}>
-                        <Text style={styles.deactivateButtonText}>Delete</Text>
-                    </Pressable> : 
-                    <Pressable style={styles.activateButton} onPress={() => HandleDelete(SelectedLog.id, SelectedLog.IsActive)}>
-                        <Text style={styles.activateButtonText}>Delete</Text>
-                    </Pressable> }
+                  {SelectedLog &&
+                    (SelectedLog.IsActive ? 
+                        <Pressable style={styles.deactivateButton} onPress={() => HandleDelete(SelectedLog.id, SelectedLog.IsActive)}>
+                            <Text style={styles.deactivateButtonText}>Delete</Text>
+                        </Pressable> : 
+                        <Pressable style={styles.activateButton} onPress={() => HandleDelete(SelectedLog.id, SelectedLog.IsActive)}>
+                            <Text style={styles.activateButtonText}>Delete</Text>
+                        </Pressable> )}
                 </View>
             </Pressable>
         </Pressable>
