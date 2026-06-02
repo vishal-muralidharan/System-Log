@@ -33,8 +33,12 @@ export default function LoginScreen() {
       } else {
         throw new Error("Account deactivated.");
       }
-    } catch (err) {
-      Alert.alert('Authentication Failed', err.message || 'Invalid credentials.');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        Alert.alert('Authentication Failed', err.message || 'Invalid credentials.');
+      } else {
+          Alert.alert('Authentication Failed', 'An unexpected error occurred.');
+      }
     } finally {
       setLoading(false);
     }
