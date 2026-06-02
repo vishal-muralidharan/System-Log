@@ -48,8 +48,9 @@ export default function AdminHistory() {
       style={[styles.row, getRowStyle(item.WorkStatus)]}
       onPress={() => SetSelectedLog(item)}
     >
-      <Text style={styles.cell}>{FormatDate(item.LoginTime)}</Text>
-      <Text style={styles.cell}>{item.WorkStatus}</Text>
+      <Text style={styles.cell}>{item.LogId}</Text>
+      <Text style={styles.bigCell}>{item.EmployeeStringId}</Text>
+      <Text style={styles.bigCell}>{FormatDate(item.LoginTime)}</Text>
     </TouchableOpacity>
   )
 
@@ -70,8 +71,9 @@ export default function AdminHistory() {
 
       <View style={styles.table}>
         <View style={styles.headerRow}>
-          <Text style={styles.headerCell}>Log Date</Text>
-          <Text style={styles.headerCell}>Status</Text>
+          <Text style={styles.headerCell}>ID</Text>
+          <Text style={styles.bigHeaderCell}>Employee ID</Text>
+          <Text style={styles.bigHeaderCell}>Log Date</Text>
         </View>
 
         <FlatList
@@ -102,10 +104,12 @@ export default function AdminHistory() {
                 {SelectedLog && (
                 <View style={styles.modalDataWrapper}>
                     <Text style={styles.modalText}><Text style={styles.boldLabel}>Log ID:</Text> {SelectedLog.LogId}</Text>
+                    <Text style={styles.modalText}><Text style={styles.boldLabel}>Date: </Text> {FormatDate(SelectedLog.LoginTime)}</Text>
+                    <Text style={styles.modalText}><Text style={styles.boldLabel}>Employee ID:</Text> {SelectedLog.EmployeeStringId}</Text>
                     <Text style={styles.modalText}><Text style={styles.boldLabel}>Status:</Text> {SelectedLog.WorkStatus}</Text>
                     <Text style={styles.modalText}><Text style={styles.boldLabel}>Log-in Time:</Text> {FormatTime(SelectedLog.LoginTime)}</Text>
                     <Text style={styles.modalText}>
-                    <Text style={styles.boldLabel}>Log-out Time:</Text> {SelectedLog.LogoutTime ? FormatTime(SelectedLog.LogoutTime) : 'Unmarked'}
+                        <Text style={styles.boldLabel}>Log-out Time:</Text> {SelectedLog.LogoutTime ? FormatTime(SelectedLog.LogoutTime) : 'Unmarked'}
                     </Text>
                 </View>
                 )}
@@ -125,7 +129,7 @@ const styles = StyleSheet.create({
   overallContainer: { 
     flex: 1, 
     backgroundColor: '#fff',
-    padding: 15 
+    padding: 20 
   },
 
   dashboardTitle: { 
@@ -179,6 +183,14 @@ const styles = StyleSheet.create({
     fontSize: 18 
   },
 
+  bigHeaderCell: { 
+    flex: 2, 
+    color: 'white', 
+    fontWeight: 'bold',
+    textAlign: 'center', 
+    fontSize: 18 
+  },
+
   row: { 
     flexDirection: 'row', 
     borderBottomWidth: 1, 
@@ -189,6 +201,14 @@ const styles = StyleSheet.create({
 
   cell: { 
     flex: 1, 
+    textAlign: 'center', 
+    fontSize: 16, 
+    color: '#000000', 
+    fontWeight: '600' 
+  },
+
+  bigCell: { 
+    flex: 2, 
     textAlign: 'center', 
     fontSize: 16, 
     color: '#000000', 
@@ -221,7 +241,7 @@ const styles = StyleSheet.create({
     padding: 25,
     elevation: 5,
     justifyContent: 'space-evenly',
-    height: '50%'
+    height: '60%'
   },
 
   modalTitle: { 
