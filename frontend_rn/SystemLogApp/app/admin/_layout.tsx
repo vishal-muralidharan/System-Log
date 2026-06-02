@@ -2,10 +2,11 @@ import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { Drawer } from 'expo-router/drawer'
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer'
+import type { DrawerContentComponentProps } from '@react-navigation/drawer'
 import { useRouter } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-function CustomDrawerContent(props) {
+function CustomDrawerContent(props: DrawerContentComponentProps) {
     const router = useRouter()
 
     const handleLogout = async () => {

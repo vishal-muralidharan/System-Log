@@ -30,7 +30,7 @@ export default function EmployeeHistory() {
 
   const FormatDate = (isoString: string) => {
     if (!isoString) return '--' 
-    return new Date(isoString).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })
+    return new Date(isoString).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' })
   }
 
   const getRowStyle = (status: string) => {
