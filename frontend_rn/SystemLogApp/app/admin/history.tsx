@@ -76,6 +76,26 @@ export default function AdminHistory() {
     )
   }
 
+  const getPillStyle = (status: string) => {
+    switch (status) {
+      case 'Leave': return styles.pillLeave 
+      case 'In-Office': return styles.pillOffice 
+      case 'Client Office': return styles.pillClientOffice 
+      case 'Work From Home': return styles.pillWFH 
+      default: return styles.pill
+    }
+  }
+
+  const getActivePillStyle = (status: string) => {
+    switch (status) {
+      case 'Leave': return styles.pillLeaveActive
+      case 'In-Office': return styles.pillOfficeActive 
+      case 'Client Office': return styles.pillClientOfficeActive 
+      case 'Work From Home': return styles.pillWFHActive 
+      default: return styles.pillActive
+    }
+  }
+
   const statusOptions = ['All', 'In-Office', 'Leave', 'Client Office', 'Work From Home']
 
   return (
@@ -97,10 +117,10 @@ export default function AdminHistory() {
           {statusOptions.map((status) => (
             <TouchableOpacity 
               key={status}
-              style={[styles.pill, filterStatus === status && styles.pillActive]}
+              style={[getPillStyle(status), filterStatus === status && getActivePillStyle(status)]}
               onPress={() => setFilterStatus(status)}
             >
-              <Text style={[styles.pillText, filterStatus === status && styles.pillTextActive]}>
+              <Text style={[getPillStyle(status), filterStatus === status && getActivePillStyle(status)]}>
                 {status}
               </Text>
             </TouchableOpacity>
@@ -351,25 +371,87 @@ const styles = StyleSheet.create({
   },
 
   pill: { 
-    paddingVertical: 12, 
-    paddingHorizontal: 20, 
-    backgroundColor: '#d7e0eb', 
+    paddingVertical: 5, 
+    paddingHorizontal: 10, 
+    backgroundColor: '#e3e3e3', 
     borderRadius: 20, 
     alignItems: 'center',
-    margin: 4
-  },
-
-  pillActive: { 
-    backgroundColor: 'rgb(25, 16, 84)' 
-  },
-
-  pillText: { 
-    color: '#39475b', 
+    margin: 4,
+    color: '#000000', 
     fontWeight: 'bold', 
     fontSize: 15 
   },
 
-  pillTextActive: { 
-    color: '#ffffff' 
-  }
+  pillActive: { 
+    backgroundColor: 'rgb(0, 0, 0)',
+    color: '#ffffff'
+  },
+
+  pillOffice: { 
+    paddingVertical: 5, 
+    paddingHorizontal: 10, 
+    backgroundColor: '#ddece0', 
+    borderRadius: 20, 
+    alignItems: 'center',
+    margin: 4,
+    color: '#144c0d', 
+    fontWeight: 'bold', 
+    fontSize: 15 
+  },
+
+  pillOfficeActive: { 
+    backgroundColor: 'rgb(16, 84, 16)',
+    color: '#ffffff'
+  },
+
+  pillLeave: { 
+    paddingVertical: 5, 
+    paddingHorizontal: 10, 
+    backgroundColor: '#ecdedd', 
+    borderRadius: 20, 
+    alignItems: 'center',
+    margin: 4,
+    color: '#4c0d0d', 
+    fontWeight: 'bold', 
+    fontSize: 15 
+  },
+
+  pillLeaveActive: { 
+    backgroundColor: 'rgb(84, 16, 16)',
+    color: '#ffffff'
+  },
+
+  pillClientOffice: { 
+    paddingVertical: 5, 
+    paddingHorizontal: 10, 
+    backgroundColor: '#ebebc3', 
+    borderRadius: 20, 
+    alignItems: 'center',
+    margin: 4,
+    color: '#474c05', 
+    fontWeight: 'bold', 
+    fontSize: 15 
+  },
+
+  pillClientOfficeActive: { 
+    backgroundColor: '#786a00',
+    color: '#ffffff'
+  },
+
+  pillWFH: {
+    paddingVertical: 5, 
+    paddingHorizontal: 10, 
+    backgroundColor: '#ebeffc', 
+    borderRadius: 20, 
+    alignItems: 'center',
+    margin: 4,
+    color: '#0a054c', 
+    fontWeight: 'bold', 
+    fontSize: 15 
+  }, 
+
+  pillWFHActive: {
+    backgroundColor: '#0a054c',
+    color: '#ffffff'
+  },
 })
