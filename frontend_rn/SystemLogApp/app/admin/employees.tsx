@@ -97,8 +97,8 @@ export default function AdminEmployees() {
 
   const getRowStyle = (status: boolean) => {
     switch (status) {
-      case true: return styles.officeRow 
-      case false: return styles.leaveRow 
+      case true: return styles.activeRow 
+      case false: return styles.inactiveRow 
     }
   }
 
@@ -123,21 +123,22 @@ export default function AdminEmployees() {
 
   const getPillStyle = (status: string) => {
     switch (status) {
-      case 'Active': return styles.pillOffice
-      case 'Inactive': return styles.pillLeave
-      default: return styles.pill
+      case 'Active': return styles.pillActive
+      case 'Inactive': return styles.pillInactive
+      default: return styles.pillAll
     }
   }
 
   const getActivePillStyle = (status: string) => {
     switch (status) {
-      case 'Active': return styles.pillOfficeActive
-      case 'Inactive': return styles.pillLeaveActive 
-      default: return styles.pillActive
+      case 'Active': return styles.pillActiveChosen
+      case 'Inactive': return styles.pillInactiveChosen 
+      default: return styles.pillAllChosen
     }
   }
 
   const statusOptions = ['All', 'Active', 'Inactive']
+  const empCheckString = empStatus === true ? 'Active' : empStatus === false ? 'Inactive' : 'All'
 
   return (
     <View style={styles.overallContainer}>
@@ -163,7 +164,6 @@ export default function AdminEmployees() {
         />
         
         <View style={styles.pillContainer}>
-          const empCheckString = {empStatus ? 'Active' : (empStatus !== null ? 'All' : 'Inactive')}
           {statusOptions.map((status) => (
             <TouchableOpacity 
               key={status}
@@ -188,7 +188,7 @@ export default function AdminEmployees() {
           data={filteredEmployees}
           keyExtractor={(item) => item.id}
           renderItem={renderLogCell}
-          ListEmptyComponent={<Text style={styles.emptyText}>No Logs Present</Text>} 
+          ListEmptyComponent={<Text style={styles.emptyText}>No Employees Present</Text>} 
         />
       </View>
 
@@ -211,12 +211,12 @@ export default function AdminEmployees() {
                 
                 {SelectedLog && (
                 <View style={styles.modalDataWrapper}>
-                    <Text style={styles.modalText}><Text style={styles.boldLabel}>Employee ID:</Text> {SelectedLog.EmployeeStringId}</Text>
-                    <Text style={styles.modalText}><Text style={styles.boldLabel}>Project:</Text> {FormatDate(SelectedLog.ProjectInvolved)}</Text>
+                    <Text style={styles.modalText}><Text style={styles.boldLabel}>Employee ID:</Text> {SelectedLog.EmployeeId}</Text>
+                    <Text style={styles.modalText}><Text style={styles.boldLabel}>Project:</Text> {SelectedLog.ProjectInvolved}</Text>
                     
                     <Text style={styles.modalText}><Text style={styles.boldLabel}>
                         Status:
-                    </Text> {SelectedLog.IsActive ? 'Active' : 'Inactive:' }</Text>
+                    </Text> {SelectedLog.IsActive ? 'Active' : 'Inactive' }</Text>
                 </View>
                 )}
                 <View style={styles.buttonContainer}>
@@ -224,13 +224,13 @@ export default function AdminEmployees() {
                       <Text style={styles.closeButtonText}>Close</Text>
                   </Pressable>
                   {SelectedLog &&
-                    (SelectedLog.IsActive ? 
-                        <Pressable style={styles.deactivateButton} onPress={() => HandleDelete(SelectedLog.id, SelectedLog.IsActive)}>
-                            <Text style={styles.deactivateButtonText}>Delete</Text>
-                        </Pressable> : 
-                        <Pressable style={styles.activateButton} onPress={() => HandleDelete(SelectedLog.id, SelectedLog.IsActive)}>
-                            <Text style={styles.activateButtonText}>Delete</Text>
-                        </Pressable> )}
+                    <Pressable style={[SelectedLog.IsActive ? styles.deactivateButton : styles.activateButton]} 
+                        onPress={() => HandleDelete(SelectedLog.id, SelectedLog.IsActive)}
+                    >
+                        <Text style={[SelectedLog.IsActive ? styles.deactivateButtonText : styles.activateButtonText]}>
+                            {SelectedLog.IsActive ? 'Deactivate': 'Activate'}
+                        </Text>
+                    </Pressable>}
                 </View>
             </Pressable>
         </Pressable>
@@ -313,10 +313,8 @@ const styles = StyleSheet.create({
     fontWeight: '600' 
   },
 
-  leaveRow: { backgroundColor: '#ffb1b1' }, 
-  officeRow: { backgroundColor: '#b8f4cd' }, 
-  wfhRow: { backgroundColor: '#afd3ec' }, 
-  clientOfficeRow: { backgroundColor: '#fef9c3' }, 
+  inactiveRow: { backgroundColor: '#ffb1b1' }, 
+  activeRow: { backgroundColor: '#b8f4cd' }, 
 
   emptyText: { 
     textAlign: 'center', 
@@ -339,7 +337,7 @@ const styles = StyleSheet.create({
     padding: 25,
     elevation: 5,
     justifyContent: 'space-evenly',
-    height: '55%'
+    height: '45%'
   },
 
   modalTitle: { 
@@ -387,7 +385,7 @@ const styles = StyleSheet.create({
   },
 
   activateButton: {
-    backgroundColor: 'rgb(126, 19, 19)', 
+    backgroundColor: 'rgb(5, 81, 10)', 
     padding: 14, 
     margin: 10,
     borderRadius: 10, 
@@ -440,7 +438,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
   },
 
-  pill: { 
+  pillAll: { 
     paddingVertical: 5, 
     paddingHorizontal: 10, 
     backgroundColor: '#e3e3e3', 
@@ -452,12 +450,12 @@ const styles = StyleSheet.create({
     fontSize: 15 
   },
 
-  pillActive: { 
+  pillAllChosen: { 
     backgroundColor: 'rgb(0, 0, 0)',
     color: '#ffffff'
   },
 
-  pillOffice: { 
+  pillActive: { 
     paddingVertical: 5, 
     paddingHorizontal: 10, 
     backgroundColor: '#ddece0', 
@@ -469,12 +467,12 @@ const styles = StyleSheet.create({
     fontSize: 15 
   },
 
-  pillOfficeActive: { 
+  pillActiveChosen: { 
     backgroundColor: 'rgb(16, 84, 16)',
     color: '#ffffff'
   },
 
-  pillLeave: { 
+  pillInactive: { 
     paddingVertical: 5, 
     paddingHorizontal: 10, 
     backgroundColor: '#ecdedd', 
@@ -486,42 +484,8 @@ const styles = StyleSheet.create({
     fontSize: 15 
   },
 
-  pillLeaveActive: { 
+  pillInactiveChosen: { 
     backgroundColor: 'rgb(84, 16, 16)',
-    color: '#ffffff'
-  },
-
-  pillClientOffice: { 
-    paddingVertical: 5, 
-    paddingHorizontal: 10, 
-    backgroundColor: '#ebebc3', 
-    borderRadius: 20, 
-    alignItems: 'center',
-    margin: 4,
-    color: '#474c05', 
-    fontWeight: 'bold', 
-    fontSize: 15 
-  },
-
-  pillClientOfficeActive: { 
-    backgroundColor: '#786a00',
-    color: '#ffffff'
-  },
-
-  pillWFH: {
-    paddingVertical: 5, 
-    paddingHorizontal: 10, 
-    backgroundColor: '#ebeffc', 
-    borderRadius: 20, 
-    alignItems: 'center',
-    margin: 4,
-    color: '#0a054c', 
-    fontWeight: 'bold', 
-    fontSize: 15 
-  }, 
-
-  pillWFHActive: {
-    backgroundColor: '#0a054c',
     color: '#ffffff'
   },
 })
