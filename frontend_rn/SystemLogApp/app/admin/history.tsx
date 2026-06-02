@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Modal, Pressable } from 'react-native'
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, 
+    Modal, Pressable, ScrollView, TextInput } from 'react-native'
 import axiosInstance from '../../src/api/axios'
 
 export default function AdminHistory() {
@@ -7,6 +8,9 @@ export default function AdminHistory() {
   const [Loading, SetLoading] = useState(true)
   const [ErrorMsg, SetError] = useState('')
   const [SelectedLog, SetSelectedLog] = useState<any | null>(null)
+
+  const [searchId, setSearchId] = useState('')
+  const [filterStatus, setFilterStatus] = useState('All')
 
   useEffect(() => {
     const fetchHistoryData = async () => {
@@ -22,6 +26,15 @@ export default function AdminHistory() {
 
     fetchHistoryData()
   }, [])
+
+  const filteredLogs = HistoryData?.filter(log => {
+    const safeId = (log.EmployeeStringId || "").toLowerCase()
+    const matchId = safeId.includes(searchId.toLowerCase())
+
+    const matchStatus = filterStatus === 'All' ? true : log.WorkStatus === filterStatus
+
+    return matchId && matchStatus
+  }) || []
 
   const FormatTime = (isoString: string) => {
     if (!isoString) return '--:--:--' 
@@ -63,11 +76,39 @@ export default function AdminHistory() {
     )
   }
 
+  const statusOptions = ['All', 'In-Office', 'Work From Home', 'Leave', 'Client Office']
+
   return (
     <View style={styles.overallContainer}>
       {ErrorMsg ? <Text style={styles.errorText}>{ErrorMsg}</Text> : null}
 
       <Text style={styles.dashboardTitle}>Attendance Log History</Text>
+
+      <View style={styles.filterSection}>
+        <TextInput 
+          style={styles.input} 
+          placeholder="Search Employee ID" 
+          placeholderTextColor="#64748b"
+          value={searchId}
+          onChangeText={setSearchId}
+        />
+        
+        <View style={styles.scrollWrapper}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.pillContainer}>
+            {statusOptions.map((status) => (
+              <TouchableOpacity 
+                key={status}
+                style={[styles.pill, filterStatus === status && styles.pillActive]}
+                onPress={() => setFilterStatus(status)}
+              >
+                <Text style={[styles.pillText, filterStatus === status && styles.pillTextActive]}>
+                  {status}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      </View>
 
       <View style={styles.table}>
         <View style={styles.headerRow}>
@@ -77,7 +118,7 @@ export default function AdminHistory() {
         </View>
 
         <FlatList
-          data={HistoryData}
+          data={filteredLogs}
           keyExtractor={(item) => item.LogId.toString()}
           renderItem={renderLogCell}
           ListEmptyComponent={<Text style={styles.emptyText}>No Logs Present</Text>} 
@@ -140,7 +181,7 @@ const styles = StyleSheet.create({
   },
 
   dashboardTitle: { 
-    fontSize: 22, 
+    fontSize: 25, 
     fontWeight: '700', 
     color: '#000000', 
     textAlign: 'center', 
@@ -285,5 +326,55 @@ const styles = StyleSheet.create({
     color: '#ffffff', 
     fontWeight: 'bold', 
     fontSize: 18 
+  },
+
+  filterSection: { 
+    marginBottom: 25 
+  },
+
+  input: {
+    backgroundColor: '#ffffff',
+    color: '#333333',
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    height: 45,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    fontSize: 16
+  },
+
+  scrollWrapper: { 
+    height: 55, 
+  },
+
+  pillContainer: { 
+    flexDirection: 'row', 
+    gap: 8, 
+    alignItems: 'center', 
+    paddingRight: 20 
+  },
+
+  pill: { 
+    paddingVertical: 8, 
+    paddingHorizontal: 16, 
+    backgroundColor: '#d7e0eb', 
+    borderRadius: 20, 
+    alignItems: 'center',
+    marginRight: 8
+  },
+
+  pillActive: { 
+    backgroundColor: 'rgb(25, 16, 84)' 
+  },
+
+  pillText: { 
+    color: '#39475b', 
+    fontWeight: 'bold', 
+    fontSize: 14 
+  },
+
+  pillTextActive: { 
+    color: '#ffffff' 
   }
 })
