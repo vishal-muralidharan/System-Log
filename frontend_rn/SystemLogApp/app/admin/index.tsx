@@ -71,7 +71,11 @@ export default function AdminHome() {
     <View style={styles.overallContainer}>
       {ErrorMsg ? <Text style={styles.errorText}>{ErrorMsg}</Text> : null}
 
-      <Text style={styles.dashboardTitle}>Today's Attendance Log ({FormatDate()})</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.dashboardTitle}>Today's Attendance Log</Text>
+        <Text style={styles.dateTitle}>({FormatDate()})</Text>  
+      </View>
+      
 
       <View style={styles.table}>
         <View style={styles.headerRow}>
@@ -141,13 +145,22 @@ const styles = StyleSheet.create({
     padding: 15 
   },
 
-  dashboardTitle: { 
-    fontSize: 22, 
-    fontWeight: '700', 
+  titleContainer: {
     color: '#000000', 
     textAlign: 'center', 
     margin: 20,
-    marginBottom: 30
+    marginBottom: 30,
+    alignItems: 'center'
+  },
+
+  dashboardTitle: { 
+    fontSize: 25, 
+    fontWeight: '700', 
+  },
+
+  dateTitle: {
+    fontSize: 30, 
+    fontWeight: '700', 
   },
   
   centerContainer: { 
