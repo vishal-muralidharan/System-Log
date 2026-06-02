@@ -90,26 +90,26 @@ export default function AdminHome() {
         transparent={true}
         visible={!!SelectedLog}
         onRequestClose={() => SetSelectedLog(null)}
-        >
-        <View>
-            <View>
-            <Text>Log Details</Text>
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Log Details</Text>
             
             {SelectedLog && (
-                <View>
-                <Text><Text>Target:</Text> {SelectedLog.EmployeeStringId}</Text>
-                <Text><Text>Status:</Text> {SelectedLog.WorkStatus}</Text>
-                <Text><Text>In:</Text> {FormatTime(SelectedLog.LoginTime)}</Text>
-                <Text>
-                    <Text>Out:</Text> {SelectedLog.LogoutTime ? FormatTime(SelectedLog.LogoutTime) : 'Unmarked'}
+              <View style={styles.modalDataWrapper}>
+                <Text style={styles.modalText}><Text style={styles.boldLabel}>Employee ID:</Text> {SelectedLog.EmployeeStringId}</Text>
+                <Text style={styles.modalText}><Text style={styles.boldLabel}>Status:</Text> {SelectedLog.WorkStatus}</Text>
+                <Text style={styles.modalText}><Text style={styles.boldLabel}>Log-in Time:</Text> {FormatTime(SelectedLog.LoginTime)}</Text>
+                <Text style={styles.modalText}>
+                  <Text style={styles.boldLabel}>Log-out Time:</Text> {SelectedLog.LogoutTime ? FormatTime(SelectedLog.LogoutTime) : 'Unmarked'}
                 </Text>
-                </View>
+              </View>
             )}
 
-            <Pressable onPress={() => SetSelectedLog(null)}>
-                <Text>Close</Text>
+            <Pressable style={styles.closeButton} onPress={() => SetSelectedLog(null)}>
+              <Text style={styles.closeButtonText}>Close</Text>
             </Pressable>
-            </View>
+          </View>
         </View>
       </Modal>
     </View>
@@ -210,17 +210,19 @@ const styles = StyleSheet.create({
   },
 
   modalContent: { 
-    width: '80%', 
+    width: '85%', 
     backgroundColor: '#ffffff', 
     borderRadius: 12, 
-    padding: 25, 
-    elevation: 5 
+    padding: 25,
+    elevation: 5,
+    justifyContent: 'space-evenly',
+    height: '50%'
   },
 
   modalTitle: { 
-    fontSize: 22, 
+    fontSize: 30, 
     fontWeight: 'bold', 
-    marginBottom: 20, 
+    marginBottom: 25, 
     color: 'rgb(25, 16, 84)', 
     textAlign: 'center' 
   },
@@ -230,7 +232,7 @@ const styles = StyleSheet.create({
   },
 
   modalText: { 
-    fontSize: 16, 
+    fontSize: 21, 
     color: '#334155', 
     marginBottom: 12 
   },
@@ -241,7 +243,7 @@ const styles = StyleSheet.create({
   },
 
   closeButton: { 
-    backgroundColor: 'rgb(25, 16, 84)', 
+    backgroundColor: 'rgb(17, 11, 51)', 
     padding: 14, 
     borderRadius: 8, 
     alignItems: 'center' 
@@ -250,6 +252,6 @@ const styles = StyleSheet.create({
   closeButtonText: { 
     color: '#ffffff', 
     fontWeight: 'bold', 
-    fontSize: 14 
+    fontSize: 18 
   }
 });
