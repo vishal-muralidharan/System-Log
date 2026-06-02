@@ -54,6 +54,14 @@ export default function AdminLayout() {
                     title: 'Admin Dashboard' 
                 }} 
             />
+
+            <Drawer.Screen 
+                name="history" 
+                options={{ 
+                    drawerLabel: 'Attendance History',
+                    title: 'Attendance History' 
+                }} 
+            />
         </Drawer>
     )
 }
