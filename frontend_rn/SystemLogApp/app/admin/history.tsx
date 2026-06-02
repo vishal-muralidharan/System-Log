@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, 
-    Modal, Pressable, ScrollView, TextInput } from 'react-native'
+    Modal, Pressable, TextInput, Alert } from 'react-native'
 import axiosInstance from '../../src/api/axios'
 
 export default function AdminHistory() {
@@ -96,20 +96,36 @@ export default function AdminHistory() {
     }
   }
 
-  const HandleDelete = async (ID: number) => {
-    if (!window.confirm('You are about to permanently delete a record. Are you sure?'))
-      return
-
-    try {
-      axiosInstance.delete(`/attendance/${ID}/`)
-      SetHistoryData((Prev: any[] | null) => 
-          Prev ? Prev.filter(Log => Log.LogId !== ID) : null
-      );
-    }
-    catch (Error) {
-      console.error(Error)
-      SetError('Could not delete Log Data')
-    }
+  const HandleDelete = (ID: number) => {
+    Alert.alert(
+      'Confirm Deletion',
+      'You are about to permanently delete a record. Are you sure?',
+      [
+        { 
+          text: 'Cancel', 
+          style: 'cancel' 
+        },
+        { 
+          text: 'Yes, Delete', 
+          style: 'destructive', 
+          onPress: async () => {
+            try {
+              await axiosInstance.delete(`/attendance/${ID}/`)
+              
+              SetHistoryData((Prev: any[] | null) => 
+                Prev ? Prev.filter(Log => Log.LogId !== ID) : null
+              )
+              SetSelectedLog(null)
+            } catch (Error) {
+              console.error(Error)
+              SetError('Could not delete Log Data')
+              
+              Alert.alert('Error', 'Could not delete this log from the database.')
+            }
+          } 
+        }
+      ]
+    )
   }
 
   const statusOptions = ['All', 'In-Office', 'Leave', 'Client Office', 'Work From Home']
@@ -258,7 +274,7 @@ const styles = StyleSheet.create({
 
   headerRow: { 
     flexDirection: 'row', 
-    backgroundColor: 'rgb(25, 16, 84)',
+    backgroundColor: 'rgb(36, 36, 36)',
     paddingVertical: 22.5 
   },
 
