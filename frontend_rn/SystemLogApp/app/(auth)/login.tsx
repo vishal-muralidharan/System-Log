@@ -26,7 +26,7 @@ export default function LoginScreen() {
         await AsyncStorage.setItem('user_profile', JSON.stringify(userProfile));
         // Direct Routing based on profile
         if (userProfile.IsAdmin) {
-          router.replace('/(admin)');
+          router.replace('/admin');
         } else {
           router.replace('/(employee)');
         }
