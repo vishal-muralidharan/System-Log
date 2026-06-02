@@ -22,7 +22,7 @@ export default function RootLayout() {
 
           const profile = JSON.parse(profileStr);
           if (profile.IsAdmin && segments[0] !== 'admin') {
-            router.replace('/(admin)');
+            router.replace('/admin');
             
           } else if (!profile.IsAdmin && segments[0] !== '(employee)') {
             router.replace('/(employee)');
