@@ -50,7 +50,7 @@ export default function AdminLayout() {
                 name="index" 
                 options={{ 
                     drawerLabel: 'Home Page',
-                    title: 'Dashboard' 
+                    title: 'Admin Dashboard' 
                 }} 
             />
         </Drawer>
