@@ -1,49 +1,52 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Modal, Pressable } from 'react-native';
-import axiosInstance from '../../src/api/axios';
+import React, { useEffect, useState } from 'react'
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Modal, Pressable } from 'react-native'
+import axiosInstance from '../../src/api/axios'
 
 export default function AdminHome() {
-  const [HistoryData, SetHistoryData] = useState<any[] | null>(null);
-  const [Loading, SetLoading] = useState(true);
-  const [ErrorMsg, SetError] = useState('');
-  const [SelectedLog, SetSelectedLog] = useState<any | null>(null);
+  const [HistoryData, SetHistoryData] = useState<any[] | null>(null)
+  const [Loading, SetLoading] = useState(true)
+  const [ErrorMsg, SetError] = useState('')
+  const [SelectedLog, SetSelectedLog] = useState<any | null>(null)
 
-  const Today = new Date().toLocaleDateString();
+  const Today = new Date().toLocaleDateString()
 
   useEffect(() => {
     const fetchHistoryData = async () => {
       try {
-        const Response = await axiosInstance.get('attendance/?ordering=LoginTime'); 
-        SetHistoryData(Response.data);
+        const Response = await axiosInstance.get('attendance/?ordering=LoginTime') 
+        SetHistoryData(Response.data)
       } catch (Error) {
-        SetError('Could not retrieve current data'); 
+        SetError('Could not retrieve current data') 
       } finally {
-        SetLoading(false);
+        SetLoading(false)
       }
-    };
+    }
 
-    fetchHistoryData();
-  }, []);
+    fetchHistoryData()
+  }, [])
 
   const TodaysLogs = HistoryData ? HistoryData.filter((Emp) => {
-    return new Date(Emp.LoginTime).toLocaleDateString() === Today; 
-  }) : [];
+    return new Date(Emp.LoginTime).toLocaleDateString() === Today 
+  }) : []
 
   const FormatTime = (isoString: string) => {
-    if (!isoString) return '--:--:--'; 
-    return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }); 
-  };
+    if (!isoString) return '--:--:--' 
+    return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) 
+  }
+
+  const FormatDate = () => {
+        return new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })
+  }
 
   const getRowStyle = (status: string) => {
     switch (status) {
-      case 'Leave': return styles.leaveRow; 
-      case 'In-Office': return styles.officeRow; 
-      case 'Client Office': return styles.clientOfficeRow; 
-      case 'Work From Home': 
-      case 'wfh': return styles.wfhRow; 
-      default: return { backgroundColor: '#ffffff' };
+      case 'Leave': return styles.leaveRow 
+      case 'In-Office': return styles.officeRow 
+      case 'Client Office': return styles.clientOfficeRow 
+      case 'Work From Home': return styles.wfhRow 
+      default: return { backgroundColor: '#ffffff' }
     }
-  };
+  }
 
   const renderLogCell = ({ item }: any) => (
     <TouchableOpacity 
@@ -53,7 +56,7 @@ export default function AdminHome() {
       <Text style={styles.cell}>{item.EmployeeStringId}</Text>
       <Text style={styles.cell}>{item.WorkStatus}</Text>
     </TouchableOpacity>
-  );
+  )
 
   if (Loading) {
     return (
@@ -61,14 +64,14 @@ export default function AdminHome() {
         <ActivityIndicator size="large" color="rgb(25, 16, 84)" />
         <Text style={styles.loadingText}>Loading today's logs...</Text>
       </View>
-    );
+    )
   }
 
   return (
     <View style={styles.overallContainer}>
       {ErrorMsg ? <Text style={styles.errorText}>{ErrorMsg}</Text> : null}
 
-      <Text style={styles.dashboardTitle}>Today's Attendance Log ({Today})</Text>
+      <Text style={styles.dashboardTitle}>Today's Attendance Log ({FormatDate()})</Text>
 
       <View style={styles.table}>
         <View style={styles.headerRow}>
@@ -91,29 +94,36 @@ export default function AdminHome() {
         visible={!!SelectedLog}
         onRequestClose={() => SetSelectedLog(null)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Log Details</Text>
-            
-            {SelectedLog && (
-              <View style={styles.modalDataWrapper}>
-                <Text style={styles.modalText}><Text style={styles.boldLabel}>Employee ID:</Text> {SelectedLog.EmployeeStringId}</Text>
-                <Text style={styles.modalText}><Text style={styles.boldLabel}>Status:</Text> {SelectedLog.WorkStatus}</Text>
-                <Text style={styles.modalText}><Text style={styles.boldLabel}>Log-in Time:</Text> {FormatTime(SelectedLog.LoginTime)}</Text>
-                <Text style={styles.modalText}>
-                  <Text style={styles.boldLabel}>Log-out Time:</Text> {SelectedLog.LogoutTime ? FormatTime(SelectedLog.LogoutTime) : 'Unmarked'}
-                </Text>
-              </View>
-            )}
+        <Pressable 
+            style={styles.modalOverlay} 
+            onPress={() => SetSelectedLog(null)}
+        >
+            <Pressable 
+                style={styles.modalContent} 
+                onPress={(e) => e.stopPropagation()} 
+            >
+                <Text style={styles.modalTitle}>Log Details</Text>
+                
+                {SelectedLog && (
+                <View style={styles.modalDataWrapper}>
+                    <Text style={styles.modalText}><Text style={styles.boldLabel}>Employee ID:</Text> {SelectedLog.EmployeeStringId}</Text>
+                    <Text style={styles.modalText}><Text style={styles.boldLabel}>Status:</Text> {SelectedLog.WorkStatus}</Text>
+                    <Text style={styles.modalText}><Text style={styles.boldLabel}>Log-in Time:</Text> {FormatTime(SelectedLog.LoginTime)}</Text>
+                    <Text style={styles.modalText}>
+                    <Text style={styles.boldLabel}>Log-out Time:</Text> {SelectedLog.LogoutTime ? FormatTime(SelectedLog.LogoutTime) : 'Unmarked'}
+                    </Text>
+                </View>
+                )}
 
-            <Pressable style={styles.closeButton} onPress={() => SetSelectedLog(null)}>
-              <Text style={styles.closeButtonText}>Close</Text>
+                <Pressable style={styles.closeButton} onPress={() => SetSelectedLog(null)}>
+                    <Text style={styles.closeButtonText}>Close</Text>
+                </Pressable>
+                
             </Pressable>
-          </View>
-        </View>
+        </Pressable>
       </Modal>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -254,4 +264,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold', 
     fontSize: 18 
   }
-});
+})
