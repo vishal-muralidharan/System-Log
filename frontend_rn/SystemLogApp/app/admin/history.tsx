@@ -96,6 +96,22 @@ export default function AdminHistory() {
     }
   }
 
+  const HandleDelete = async (ID: number) => {
+    if (!window.confirm('You are about to permanently delete a record. Are you sure?'))
+      return
+
+    try {
+      axiosInstance.delete(`/attendance/${ID}/`)
+      SetHistoryData((Prev: any[] | null) => 
+          Prev ? Prev.filter(Log => Log.LogId !== ID) : null
+      );
+    }
+    catch (Error) {
+      console.error(Error)
+      SetError('Could not delete Log Data')
+    }
+  }
+
   const statusOptions = ['All', 'In-Office', 'Leave', 'Client Office', 'Work From Home']
 
   return (
@@ -179,10 +195,15 @@ export default function AdminHistory() {
                     )}
                 </View>
                 )}
-
-                <Pressable style={styles.closeButton} onPress={() => SetSelectedLog(null)}>
-                    <Text style={styles.closeButtonText}>Close</Text>
-                </Pressable>
+                <View style={styles.buttonContainer}>
+                  <Pressable style={styles.closeButton} onPress={() => SetSelectedLog(null)}>
+                      <Text style={styles.closeButtonText}>Close</Text>
+                  </Pressable>
+                  <Pressable style={styles.deleteButton} onPress={() => HandleDelete(SelectedLog.LogId)}>
+                      <Text style={styles.deleteButtonText}>Delete</Text>
+                  </Pressable>
+                </View>
+                
                 
             </Pressable>
         </Pressable>
@@ -333,14 +354,37 @@ const styles = StyleSheet.create({
     color: '#0f172a' 
   },
 
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
   closeButton: { 
     backgroundColor: 'rgb(17, 11, 51)', 
-    padding: 14, 
-    borderRadius: 8, 
-    alignItems: 'center' 
+    padding: 14,
+    margin: 10, 
+    borderRadius: 10, 
+    alignItems: 'center',
+    width: '45%'
   },
 
   closeButtonText: { 
+    color: '#ffffff', 
+    fontWeight: 'bold', 
+    fontSize: 18 
+  },
+
+  deleteButton: { 
+    backgroundColor: 'rgb(126, 19, 19)', 
+    padding: 14, 
+    margin: 10,
+    borderRadius: 10, 
+    alignItems: 'center',
+    width: '45%'
+  },
+
+  deleteButtonText: { 
     color: '#ffffff', 
     fontWeight: 'bold', 
     fontSize: 18 
