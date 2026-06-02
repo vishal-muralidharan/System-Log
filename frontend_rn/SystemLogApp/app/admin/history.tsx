@@ -76,7 +76,7 @@ export default function AdminHistory() {
     )
   }
 
-  const statusOptions = ['All', 'In-Office', 'Work From Home', 'Leave', 'Client Office']
+  const statusOptions = ['All', 'In-Office', 'Leave', 'Client Office', 'Work From Home']
 
   return (
     <View style={styles.overallContainer}>
@@ -93,20 +93,18 @@ export default function AdminHistory() {
           onChangeText={setSearchId}
         />
         
-        <View style={styles.scrollWrapper}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.pillContainer}>
-            {statusOptions.map((status) => (
-              <TouchableOpacity 
-                key={status}
-                style={[styles.pill, filterStatus === status && styles.pillActive]}
-                onPress={() => setFilterStatus(status)}
-              >
-                <Text style={[styles.pillText, filterStatus === status && styles.pillTextActive]}>
-                  {status}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+        <View style={styles.pillContainer}>
+          {statusOptions.map((status) => (
+            <TouchableOpacity 
+              key={status}
+              style={[styles.pill, filterStatus === status && styles.pillActive]}
+              onPress={() => setFilterStatus(status)}
+            >
+              <Text style={[styles.pillText, filterStatus === status && styles.pillTextActive]}>
+                {status}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
 
@@ -338,30 +336,27 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 15,
     height: 45,
-    marginBottom: 15,
+    marginBottom: 20,
     borderWidth: 1,
     borderColor: '#e2e8f0',
     fontSize: 16
   },
 
-  scrollWrapper: { 
-    height: 55, 
-  },
-
   pillContainer: { 
     flexDirection: 'row', 
-    gap: 8, 
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 10, 
     alignItems: 'center', 
-    paddingRight: 20 
   },
 
   pill: { 
-    paddingVertical: 8, 
-    paddingHorizontal: 16, 
+    paddingVertical: 12, 
+    paddingHorizontal: 20, 
     backgroundColor: '#d7e0eb', 
     borderRadius: 20, 
     alignItems: 'center',
-    marginRight: 8
+    margin: 4
   },
 
   pillActive: { 
@@ -371,7 +366,7 @@ const styles = StyleSheet.create({
   pillText: { 
     color: '#39475b', 
     fontWeight: 'bold', 
-    fontSize: 14 
+    fontSize: 15 
   },
 
   pillTextActive: { 
