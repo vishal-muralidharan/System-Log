@@ -102,11 +102,19 @@ export default function EmployeeHistory() {
                 {SelectedLog && (
                 <View style={styles.modalDataWrapper}>
                     <Text style={styles.modalText}><Text style={styles.boldLabel}>Log ID:</Text> {SelectedLog.LogId}</Text>
+                    <Text style={styles.modalText}><Text style={styles.boldLabel}>Date:</Text> {FormatDate(SelectedLog.LoginTime)}</Text>
                     <Text style={styles.modalText}><Text style={styles.boldLabel}>Status:</Text> {SelectedLog.WorkStatus}</Text>
-                    <Text style={styles.modalText}><Text style={styles.boldLabel}>Log-in Time:</Text> {FormatTime(SelectedLog.LoginTime)}</Text>
-                    <Text style={styles.modalText}>
-                    <Text style={styles.boldLabel}>Log-out Time:</Text> {SelectedLog.LogoutTime ? FormatTime(SelectedLog.LogoutTime) : 'Unmarked'}
-                    </Text>
+                    
+                    <Text style={styles.modalText}><Text style={styles.boldLabel}>
+                        {SelectedLog.WorkStatus === "Leave" ? 'Leave Marked:' : 'Log-in Time:' }
+                    </Text> {FormatTime(SelectedLog.LoginTime)}</Text>
+
+                    {SelectedLog.WorkStatus !== "Leave" && (
+                        <Text style={styles.modalText}>
+                            <Text style={styles.boldLabel}>Log-out Time: </Text> 
+                            {SelectedLog.LogoutTime ? FormatTime(SelectedLog.LogoutTime) : 'Unmarked'}
+                        </Text>
+                    )}
                 </View>
                 )}
 
@@ -129,12 +137,12 @@ const styles = StyleSheet.create({
   },
 
   dashboardTitle: { 
-    fontSize: 22, 
+    fontSize: 25, 
     fontWeight: '700', 
     color: '#000000', 
     textAlign: 'center', 
     margin: 20,
-    marginBottom: 30
+    marginBottom: 40
   },
   
   centerContainer: { 
@@ -221,7 +229,7 @@ const styles = StyleSheet.create({
     padding: 25,
     elevation: 5,
     justifyContent: 'space-evenly',
-    height: '50%'
+    height: '45%'
   },
 
   modalTitle: { 
