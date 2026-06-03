@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native'
 import { Picker } from '@react-native-picker/picker'
 import axiosInstance from '../../src/api/axios'
 
 const EmployeeHome = () => {
-    const [AttendanceData, SetAttendanceData] = useState(null)
-    const [Status, SetStatus] = useState('In-Office')
+    const [AttendanceData, SetAttendanceData] = useState<any[] | null>(null)
+    const [Status, SetStatus] = useState('')
     const [Loading, SetLoading] = useState(true)
     const [ErrorMsg, SetError] = useState('')
 
@@ -39,6 +39,12 @@ const EmployeeHome = () => {
         SetLoading(true)
         SetError('')
 
+        if (!Status) {
+            Alert.alert('Warning', 'Work Status has not been chosen!')
+            SetLoading(false)
+            return
+        }
+
         try {
             const Response = await axiosInstance.post('attendance/login/', {
                 WorkStatus: Status
@@ -70,7 +76,7 @@ const EmployeeHome = () => {
         }
     }
 
-    const FormatTime = (isoString) => {
+    const FormatTime = (isoString: string) => {
         if (!isoString) return '--:--:--'
         return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     }
@@ -84,6 +90,26 @@ const EmployeeHome = () => {
         )
     }
 
+    const getPillStyle = (status: string) => {
+        switch (status) {
+        case 'Leave': return styles.pillLeave 
+        case 'In-Office': return styles.pillOffice 
+        case 'Client Office': return styles.pillClientOffice 
+        case 'Work From Home': return styles.pillWFH 
+        }
+    }
+
+    const getActivePillStyle = (status: string) => {
+        switch (status) {
+        case 'Leave': return styles.pillLeaveActive
+        case 'In-Office': return styles.pillOfficeActive 
+        case 'Client Office': return styles.pillClientOfficeActive 
+        case 'Work From Home': return styles.pillWFHActive 
+        }
+    }
+
+    const statusOptions = ['In-Office', 'Client Office', 'Work From Home', 'Leave']
+
     return (
         <View style={styles.container}>
             {ErrorMsg ? <Text style={styles.error}>{ErrorMsg}</Text> : null}
@@ -95,20 +121,18 @@ const EmployeeHome = () => {
                     <View style={styles.formContainer}>
                         <Text style={styles.label}>Select your work status:</Text>
 
-                        <View style={styles.pickerWrapper}>
-                            <Picker
-                                selectedValue={Status}
-                                onValueChange={(itemValue) => SetStatus(itemValue)}
-                                style={styles.picker}
-                                itemStyle={{ color: 'white' }}
-                                dropdownIconColor="white"
-                                mode="dropdown"
+                        <View style={styles.pillContainer}>
+                            {statusOptions.map((status) => (
+                            <TouchableOpacity 
+                                key={status}
+                                style={[getPillStyle(status), Status === status && getActivePillStyle(status)]}
+                                onPress={() => SetStatus(status)}
                             >
-                                <Picker.Item label="In-Office" value="In-Office" />
-                                <Picker.Item label="Work From Home" value="Work From Home" />
-                                <Picker.Item label="Leave" value="Leave" />
-                                <Picker.Item label="Client Office" value="Client Office" />
-                            </Picker>
+                                <Text style={[getPillStyle(status), Status === status && getActivePillStyle(status)]}>
+                                {status}
+                                </Text>
+                            </TouchableOpacity>
+                            ))}
                         </View>
 
                         <TouchableOpacity style={styles.primaryButton} onPress={HandleClockIn}>
@@ -175,7 +199,7 @@ const styles = StyleSheet.create({
     conditionBox: {
         alignItems: 'center',
         width: '100%',
-        backgroundColor: '#e3e8f2',
+        backgroundColor: '#e3e3e3',
         padding: 20,
         borderRadius: 10
     },
@@ -196,21 +220,8 @@ const styles = StyleSheet.create({
 
     label: {
         fontSize: 16,
-        marginBottom: 5,
+        marginBottom: 25,
         color: '#333',
-        textAlign: 'center',
-    },
-
-    pickerWrapper: {
-        backgroundColor: 'rgb(16, 10, 59)',
-        borderRadius: 5,
-        marginVertical: 15,
-        marginHorizontal: 5,
-    },
-
-    picker: {
-        color: '#ffffff',
-        width: '100%',
         textAlign: 'center',
     },
 
@@ -219,6 +230,7 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
         margin: 5,
         borderRadius: 5,
+        marginTop: 35,
         alignItems: 'center',
     },
 
@@ -285,6 +297,82 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 20,
         fontWeight: 'bold',
+    },
+
+    pillContainer: { 
+        flexDirection: 'row', 
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        gap: 10, 
+        alignItems: 'center', 
+    },
+
+    pillOffice: { 
+        paddingVertical: 5, 
+        paddingHorizontal: 10, 
+        backgroundColor: '#ddece0', 
+        borderRadius: 20, 
+        alignItems: 'center',
+        margin: 4,
+        color: '#144c0d', 
+        fontWeight: 'bold', 
+        fontSize: 15 
+    },
+
+    pillOfficeActive: { 
+        backgroundColor: 'rgb(16, 84, 16)',
+        color: '#ffffff'
+    },
+
+    pillLeave: { 
+        paddingVertical: 5, 
+        paddingHorizontal: 10, 
+        backgroundColor: '#ecdedd', 
+        borderRadius: 20, 
+        alignItems: 'center',
+        margin: 4,
+        color: '#4c0d0d', 
+        fontWeight: 'bold', 
+        fontSize: 15 
+    },
+
+    pillLeaveActive: { 
+        backgroundColor: 'rgb(84, 16, 16)',
+        color: '#ffffff'
+    },
+
+    pillClientOffice: { 
+        paddingVertical: 5, 
+        paddingHorizontal: 10, 
+        backgroundColor: '#ebebc3', 
+        borderRadius: 20, 
+        alignItems: 'center',
+        margin: 4,
+        color: '#474c05', 
+        fontWeight: 'bold', 
+        fontSize: 15 
+    },
+
+    pillClientOfficeActive: { 
+        backgroundColor: '#786a00',
+        color: '#ffffff'
+    },
+
+    pillWFH: {
+        paddingVertical: 5, 
+        paddingHorizontal: 10, 
+        backgroundColor: '#ebeffc', 
+        borderRadius: 20, 
+        alignItems: 'center',
+        margin: 4,
+        color: '#0a054c', 
+        fontWeight: 'bold', 
+        fontSize: 15 
+    }, 
+
+    pillWFHActive: {
+        backgroundColor: '#0a054c',
+        color: '#ffffff'
     },
 })
 
