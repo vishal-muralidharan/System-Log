@@ -1,8 +1,7 @@
 import React from "react";
-import { useNavigate, Link, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import '../css/Dashboard.css';
 import Sidebar from "./Sidebar";
-import Home from "./Home";
 
 const Dashboard = () => {
     return (
@@ -22,6 +21,5 @@ const Dashboard = () => {
         </div>
     );
 }
-
 
 export default Dashboard;

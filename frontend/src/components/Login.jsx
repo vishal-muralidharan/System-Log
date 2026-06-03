@@ -4,7 +4,6 @@ import axiosInstance from '../api/axios';
 import '../css/Login.css';
 
 const Login = () => {
-    // Updated to standard React camelCase
     const [employeeId, setEmployeeId] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -17,7 +16,6 @@ const Login = () => {
         setIsLoading(true);
 
         try {
-            // 🚨 UPDATED: Keys sent to Django must be snake_case
             const loginResponse = await axiosInstance.post('auth/login/', {
                 employee_id: employeeId, 
                 password: password
@@ -31,7 +29,6 @@ const Login = () => {
             const userProfile = profileResponse.data[0];
 
             if (userProfile) {
-                // 🚨 UPDATED: Reading properties from Django must be snake_case
                 if (userProfile.is_active) {
                     if (userProfile.is_admin) {
                         navigate('/admin');

@@ -4,55 +4,55 @@ import axiosInstance from '../api/axios';
 import '../css/Signup.css';
 
 const Signup = () => {
-    const [FirstName, SetFirstName] = useState('');
-    const [LastName, SetLastName] = useState('');
-    const [ProjectInvolved, SetProjectInvolved] = useState('');
-    const [Password, SetPassword] = useState('');
-    const [ConfirmPassword, SetConfirmPassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [projectInvolved, setProjectInvolved] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     
-    const [ErrorMessage, SetErrorMessage] = useState('');
-    const [SuccessMessage, SetSuccessMessage] = useState('');
-    const [IsLoading, SetIsLoading] = useState(false);
-    const NavigateTo = useNavigate();
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const HandleSubmit = async (EventObj) => {
-        EventObj.preventDefault();
-        SetErrorMessage('');
-        SetSuccessMessage('');
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setErrorMessage('');
+        setSuccessMessage('');
 
-        if (Password !== ConfirmPassword) {
-            SetErrorMessage('Passwords do not match.');
+        if (password !== confirmPassword) {
+            setErrorMessage('Passwords do not match.');
             return;
         }
 
-        SetIsLoading(true);
+        setIsLoading(true);
 
         try {
             const response = await axiosInstance.post('auth/register/', {
-                FirstName: FirstName,
-                LastName: LastName,
-                ProjectInvolved: ProjectInvolved,
-                password: Password,
-                password_confirm: ConfirmPassword
+                first_name: firstName,
+                last_name: lastName,
+                project_involved: projectInvolved,
+                password: password,
+                password_confirm: confirmPassword
             });
 
-            const EmployeeID = response.data.EmployeeId;
+            const employeeId = response.data.employee_id;
 
-            SetSuccessMessage(`Success! Your Employee ID is: ${EmployeeID}. Contact Administrator for Approval`);
+            setSuccessMessage(`Success! Your Employee ID is: ${employeeId}. Contact Administrator for Approval`);
             
             setTimeout(() => {
-                NavigateTo('/login');
+                navigate('/login');
             }, 2000);
 
         } catch (error) {
             if (error.response && error.response.data) {
                 const firstErrorField = Object.values(error.response.data)[0];
-                SetErrorMessage(firstErrorField[0]); 
+                setErrorMessage(firstErrorField[0]); 
             } else {
-                SetErrorMessage("An unexpected error occurred. Please try again.");
+                setErrorMessage("An unexpected error occurred. Please try again.");
             }
         } finally {
-            SetIsLoading(false);
+            setIsLoading(false);
         }
     };
 
@@ -62,17 +62,17 @@ const Signup = () => {
                 <div className="signup-form-box">
                     <h2 className="signup-title">Welcome to Logs</h2><br />
                     
-                    {ErrorMessage && <div className="signup-error">{ErrorMessage}</div>}
-                    {SuccessMessage && <div className="signup-success">{SuccessMessage}</div>}
+                    {errorMessage && <div className="signup-error">{errorMessage}</div>}
+                    {successMessage && <div className="signup-success">{successMessage}</div>}
 
-                    <form onSubmit={HandleSubmit}>
+                    <form onSubmit={handleSubmit}>
                         <div className="name-row">
                             <div className="name-col">
                                 <label className="signup-label">First Name</label>
                                 <input 
                                     type="text" 
-                                    value={FirstName} 
-                                    onChange={(E) => SetFirstName(E.target.value)} 
+                                    value={firstName} 
+                                    onChange={(e) => setFirstName(e.target.value)} 
                                     className="signup-input" 
                                     placeholder="Vishal"
                                     required 
@@ -82,8 +82,8 @@ const Signup = () => {
                                 <label className="signup-label">Last Name</label>
                                 <input 
                                     type="text" 
-                                    value={LastName} 
-                                    onChange={(E) => SetLastName(E.target.value)} 
+                                    value={lastName} 
+                                    onChange={(e) => setLastName(e.target.value)} 
                                     className="signup-input" 
                                     placeholder="M"
                                     required 
@@ -94,8 +94,8 @@ const Signup = () => {
                         <label className="signup-label">Project</label>
                         <input 
                             type="text" 
-                            value={ProjectInvolved} 
-                            onChange={(E) => SetProjectInvolved(E.target.value)} 
+                            value={projectInvolved} 
+                            onChange={(e) => setProjectInvolved(e.target.value)} 
                             className="signup-input standalone" 
                             placeholder="e.g. BitHab, Teno"
                         />
@@ -103,8 +103,8 @@ const Signup = () => {
                         <label className="signup-label">Create Password</label>
                         <input 
                             type="password" 
-                            value={Password} 
-                            onChange={(E) => SetPassword(E.target.value)} 
+                            value={password} 
+                            onChange={(e) => setPassword(e.target.value)} 
                             className="signup-input standalone" 
                             placeholder="Enter your passwword"
                             required 
@@ -113,15 +113,15 @@ const Signup = () => {
                         <label className="signup-label">Confirm Password</label>
                         <input 
                             type="password" 
-                            value={ConfirmPassword} 
-                            onChange={(E) => SetConfirmPassword(E.target.value)} 
+                            value={confirmPassword} 
+                            onChange={(e) => setConfirmPassword(e.target.value)} 
                             className="signup-input standalone" 
                             placeholder="Re-enter the password"
                             required 
                         />
 
-                        <button type="submit" disabled={IsLoading || SuccessMessage !== ''} className="signup-button">
-                            {IsLoading ? 'Creating Account' : 'Register'}
+                        <button type="submit" disabled={isLoading || successMessage !== ''} className="signup-button">
+                            {isLoading ? 'Creating Account' : 'Register'}
                         </button>
                     </form>
 
