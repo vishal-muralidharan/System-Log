@@ -1,86 +1,71 @@
-import React, {useEffect, useState} from 'react';
-import '../css/Employee.css';
-import axiosInstance from '../api/axios';
+import React, { useEffect, useState } from 'react'
+import '../css/Employee.css'
+import axiosInstance from '../api/axios'
 
 const AdminEmployees = () => {
-  const [EmployeeData, SetEmployeeData] = useState(null)
-  const [Loading, SetLoading] = useState(true)
-  const [ErrorMsg, SetError] = useState('')
-  const [Search, SetSearch] = useState('')
-  const [Project, SetProject] = useState('')
-  const [Active, SetActive] = useState('')
+  const [employeeData, setEmployeeData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [errorMsg, setErrorMsg] = useState('')
+  const [search, setSearch] = useState('')
+  const [project, setProject] = useState('')
+  const [active, setActive] = useState('')
 
   useEffect(() => {
-      const fetchEmployeeData = async () => {
-        try {
-          const Response = await axiosInstance.get('employees/')
-          const Logs = Response.data
-          const sortedLogs = [...Logs].sort((a, b) => a.id - b.id);
+    const fetchEmployeeData = async () => {
+      try {
+        const response = await axiosInstance.get('employees/')
+        const logs = response.data
+        const sortedLogs = [...logs].sort((a, b) => a.id - b.id)
 
-          SetEmployeeData(sortedLogs)
-        }
-        catch (Error) {
-          console.error(Error)
-          SetError('Could not retrieve current data')
-        }
-        finally {
-          SetLoading(false)
-        }
+        setEmployeeData(sortedLogs)
+      } catch (error) {
+        console.error(error)
+        setErrorMsg('Could not retrieve current data')
+      } finally {
+        setLoading(false)
       }
+    }
 
-      fetchEmployeeData()
-    }, []
-  )
+    fetchEmployeeData()
+  }, [])
 
-  const HandleDelete = async (ID, CurrentStatus) => {
-    const ActionText = CurrentStatus ? 'deactivate' : 'activate';
+  const handleDelete = async (id, currentStatus) => {
+    const actionText = currentStatus ? 'deactivate' : 'activate'
 
-    if (!window.confirm(`ATTENTION! Are you sure you want to ${ActionText} the user?`))
-        return
+    if (!window.confirm(`ATTENTION! Are you sure you want to ${actionText} the user?`)) {
+      return
+    }
 
     try {
-        await axiosInstance.patch(`employees/${ID}/`, 
-          {
-            IsActive: !CurrentStatus
-          }
-        )
+      await axiosInstance.patch(`employees/${id}/`, {
+        is_active: !currentStatus
+      })
 
-        SetEmployeeData(Prev => Prev.map(Log => 
-          Log.id === ID ? {...Log, IsActive: !CurrentStatus} : Log
-        ))
-    }
-    catch (Error) {
-        console.error(Error)
-        SetError(`FAILED: Could not ${ActionText} employee`)
+      setEmployeeData(prev => prev.map(log => 
+        log.id === id ? { ...log, is_active: !currentStatus } : log
+      ))
+    } catch (error) {
+      console.error(error)
+      setErrorMsg(`FAILED: Could not ${actionText} employee`)
     }
   }
 
-  const FilteredEmployees = EmployeeData ? EmployeeData.filter (Emp => {
-    const SafeEmployeeId = (Emp.EmployeeId || "").toLowerCase()
-    const EmpIDMatch = SafeEmployeeId.includes(Search.toLowerCase())
+  const filteredEmployees = employeeData ? employeeData.filter(emp => {
+    const safeEmployeeId = (emp.employee_id || "").toLowerCase()
+    const empIdMatch = safeEmployeeId.includes(search.toLowerCase())
 
-    const SafeProject = (Emp.ProjectInvolved || "").toLowerCase()
-    const ProjectMatch = SafeProject.includes(Project.toLowerCase())
+    const safeProject = (emp.project_involved || "").toLowerCase()
+    const projectMatch = safeProject.includes(project.toLowerCase())
 
-    let ActiveMatch = true
-    if (Active !== '') {
-      ActiveMatch = Emp.IsActive === Active
+    let activeMatch = true
+    if (active !== '') {
+      activeMatch = emp.is_active === active
     }
 
-    return EmpIDMatch && ProjectMatch && ActiveMatch && !Emp.IsAdmin
+    return empIdMatch && projectMatch && activeMatch && !emp.is_admin
   }) : []
 
-  const FormatTime = (isoString) => {
-    if (!isoString) return '--:--:--';
-      return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  };
-
-  const FormatDate = (IsoString) => {
-        if (!IsoString) return '--';
-        return new Date(IsoString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  };
-
-  if (Loading) {
+  if (loading) {
     return (
       <h2 className='condition loading'>Loading your history...</h2>
     )
@@ -94,8 +79,8 @@ const AdminEmployees = () => {
           <input 
             type='text' 
             placeholder='Search Employee ID' 
-            value={Search} 
-            onChange={(e) => SetSearch(e.target.value)}
+            value={search} 
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         <div className='search-field'>
@@ -103,54 +88,57 @@ const AdminEmployees = () => {
           <input 
             type='text' 
             placeholder='Search Project' 
-            value={Project} 
-            onChange={(e) => SetProject(e.target.value)}
+            value={project} 
+            onChange={(e) => setProject(e.target.value)}
           />
         </div>
         <div className='search-field'>
           <label>Employee Active Status:</label>
           <select 
-            value={Active} 
+            value={active} 
             onChange={(e) => {
-                const Selected = e.target.value;
+              const selected = e.target.value
 
-                if (Selected === "all") SetActive('');
-                if (Selected === "true") SetActive(true);
-                if (Selected === "false") SetActive(false);
-              }
-            }
-            required>
-                <option value='all'>Show All</option>
-                <option value='true'>Active</option>
-                <option value='false'>Inactive</option>
+              if (selected === "all") setActive('')
+              if (selected === "true") setActive(true)
+              if (selected === "false") setActive(false)
+            }}
+            required
+          >
+            <option value='all'>Show All</option>
+            <option value='true'>Active</option>
+            <option value='false'>Inactive</option>
           </select>
         </div>
       </div>
 
-      {FilteredEmployees.length === 0 ? <h2><br />No Matching Records</h2> :
-      <table>
-        <thead>
-          <tr>
-            <th>Employee ID</th>
-            <th>Project</th>
-            <th>Active</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {FilteredEmployees.map((Data) => (
-            (!Data.IsAdmin) && (
-            <tr key={Data.id} className={Data.IsActive ? 'active-emp' : 'not-active-emp'}>
-              <td>{Data.EmployeeId}</td>
-              <td>{Data.ProjectInvolved}</td>
-              <td>{Data.IsActive ? 'Yes' : 'No'}</td>
-              <td><button onClick={() => HandleDelete(Data.id, Data.IsActive)}>
-                    {Data.IsActive ? 'Deactivate' : 'Activate'}
-                  </button></td>
+      {filteredEmployees.length === 0 ? <h2><br />No Matching Records</h2> :
+        <table>
+          <thead>
+            <tr>
+              <th>Employee ID</th>
+              <th>Project</th>
+              <th>Active</th>
+              <th>Actions</th>
             </tr>
-          )))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredEmployees.map((data) => (
+              !data.is_admin && (
+                <tr key={data.id} className={data.is_active ? 'active-emp' : 'not-active-emp'}>
+                  <td>{data.employee_id}</td>
+                  <td>{data.project_involved}</td>
+                  <td>{data.is_active ? 'Yes' : 'No'}</td>
+                  <td>
+                    <button onClick={() => handleDelete(data.id, data.is_active)}>
+                      {data.is_active ? 'Deactivate' : 'Activate'}
+                    </button>
+                  </td>
+                </tr>
+              )
+            ))}
+          </tbody>
+        </table>
       }
     </div>
   )

@@ -1,7 +1,7 @@
-import React from "react";
-import { Outlet } from 'react-router-dom';
-import '../css/Dashboard.css';
-import AdminSidebar from "./AdminSidebar";
+import React from "react"
+import { Outlet } from 'react-router-dom'
+import '../css/Dashboard.css'
+import AdminSidebar from "./AdminSidebar"
 
 const AdminDashboard = () => {
     return (
@@ -19,7 +19,7 @@ const AdminDashboard = () => {
                 </div>
             </div>
         </div>
-    );
+    )
 }
 
-export default AdminDashboard;
+export default AdminDashboard

@@ -1,51 +1,51 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import '../css/Sidebar.css';
+import React, { useEffect, useState, useRef } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import '../css/Sidebar.css'
 
 const AdminSidebar = () => {
-    const navigate = useNavigate();
-    const [confirm, setConfirm] = useState(false);
-    const confirmRef = useRef(null);
+    const navigate = useNavigate()
+    const [confirm, setConfirm] = useState(false)
+    const confirmRef = useRef(null)
 
     const [active, setActive] = useState(() => {
-        const savedTab = localStorage.getItem("activeTab");
-        return savedTab ? savedTab : "Home";
-    });
+        const savedTab = localStorage.getItem("activeTab")
+        return savedTab ? savedTab : "Home"
+    })
 
     useEffect(() => {
-        localStorage.setItem("activeTab", active);
-    }, [active]);
+        localStorage.setItem("activeTab", active)
+    }, [active])
 
     useEffect(() => {
         const handleConfirmClick = (event) => {
             if (confirmRef.current && !confirmRef.current.contains(event.target)) {
-                setConfirm(false);
+                setConfirm(false)
             }
-        };
+        }
 
         const handleConfirmScroll = () => {
-            setConfirm(false);
-        };
+            setConfirm(false)
+        }
 
         if (confirm) {
-            document.addEventListener("scroll", handleConfirmScroll, true);
-            document.addEventListener("mousedown", handleConfirmClick);
+            document.addEventListener("scroll", handleConfirmScroll, true)
+            document.addEventListener("mousedown", handleConfirmClick)
         }
 
         return () => {
-            document.removeEventListener("scroll", handleConfirmScroll, true);
-            document.removeEventListener("mousedown", handleConfirmClick);
-        };
-    }, [confirm]);
+            document.removeEventListener("scroll", handleConfirmScroll, true)
+            document.removeEventListener("mousedown", handleConfirmClick)
+        }
+    }, [confirm])
 
     const handleLogout = () => {
-        setConfirm(false);
+        setConfirm(false)
 
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.setItem("activeTab", "Home");
-        navigate('/login');
-    };
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
+        localStorage.setItem("activeTab", "Home")
+        navigate('/login')
+    }
 
     return (
         <div className="sidebar-style">
@@ -79,7 +79,7 @@ const AdminSidebar = () => {
                 </div>
             )}
         </div>
-    );
-};
+    )
+}
 
-export default AdminSidebar;
+export default AdminSidebar
