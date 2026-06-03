@@ -61,6 +61,13 @@ export default function EmployeeLayout() {
                     title: 'Attendance History' 
                 }} 
             />
+            <Drawer.Screen 
+                name="profile" 
+                options={{ 
+                    drawerLabel: 'Profile',
+                    title: 'Profile' 
+                }} 
+            />
         </Drawer>
     )
 }
