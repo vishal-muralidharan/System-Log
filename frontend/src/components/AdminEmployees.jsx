@@ -93,7 +93,7 @@ const AdminEmployees = () => {
           <label>Employee ID:</label>
           <input 
             type='text' 
-            placeholder='Search Employee ID:' 
+            placeholder='Search Employee ID' 
             value={Search} 
             onChange={(e) => SetSearch(e.target.value)}
           />
@@ -102,7 +102,7 @@ const AdminEmployees = () => {
           <label>Projects: </label>
           <input 
             type='text' 
-            placeholder='Search Project:' 
+            placeholder='Search Project' 
             value={Project} 
             onChange={(e) => SetProject(e.target.value)}
           />
