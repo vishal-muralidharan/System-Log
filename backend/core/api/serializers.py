@@ -9,12 +9,12 @@ class EmployeeSerializer(serializers.ModelSerializer):
         required=False, 
         style={'input_type': 'password'}
     )
-    EmployeeId = serializers.CharField(read_only=True) #employee_id
+    employee_id = serializers.CharField(read_only=True)
 
     class Meta:
         model = Employee
         # In-Built 'password' from AbstractBaseUser
-        fields = ['id', 'EmployeeId', 'ProjectInvolved', 'IsAdmin', 'IsActive', 'password']
+        fields = ['id', 'employee_id', 'project_involved', 'is_admin', 'is_active', 'password']
 
     def validate(self, data):
         """
@@ -33,30 +33,30 @@ class EmployeeSerializer(serializers.ModelSerializer):
         """
         Cryptographically hash the password in the creation process.
         """
-        Password = validated_data.pop('password', None)
-        EmployeeInstance = self.Meta.model(**validated_data)
+        password = validated_data.pop('password', None)
+        employee_instance = self.Meta.model(**validated_data)
         
-        # We know Password exists here because of the validate() method above,
+        # We know password exists here because of the validate() method above,
         # but the if-check remains as a standard safety guard.
-        if Password is not None:
-            EmployeeInstance.set_password(Password)
+        if password is not None:
+            employee_instance.set_password(password)
             
-        EmployeeInstance.save()
-        return EmployeeInstance
+        employee_instance.save()
+        return employee_instance
 
     def update(self, instance, validated_data):
         """
         Cryptographically hash the password if a new password is entered.
         """
-        Password = validated_data.pop('password', None)
+        password = validated_data.pop('password', None)
         
-        # Update all standard fields (e.g., ProjectInvolved, IsActive)
+        # Update all standard fields (e.g., project_involved, is_active)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
             
         # If a new password was provided, hash it
-        if Password is not None:
-            instance.set_password(Password)
+        if password is not None:
+            instance.set_password(password)
             
         instance.save()
         return instance
@@ -64,11 +64,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 class AttendanceSerializer(serializers.ModelSerializer):
     # This pulls the actual employee ID to the frontend, and not the database row ID number.
-    EmployeeStringId = serializers.ReadOnlyField(source='EmployeeRef.EmployeeId')
+    employee_string_id = serializers.ReadOnlyField(source='employee_ref.employee_id')
 
     class Meta:
         model = AttendanceLog
-        fields = ['LogId', 'EmployeeRef', 'EmployeeStringId', 'LoginTime', 'LogoutTime', 'WorkStatus']
+        fields = ['log_id', 'employee_ref', 'employee_string_id', 'login_time', 'logout_time', 'work_status']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -77,8 +77,8 @@ class RegisterSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Employee
-        fields = ('EmployeeId', 'FirstName', 'LastName', 'ProjectInvolved', 'password', 'password_confirm')
-        read_only_fields = ('EmployeeId',)
+        fields = ('employee_id', 'first_name', 'last_name', 'project_involved', 'password', 'password_confirm')
+        read_only_fields = ('employee_id',)
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password_confirm']:
@@ -89,9 +89,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         validated_data.pop('password_confirm')
         
         user = Employee.objects.create_user(
-            FirstName=validated_data.get('FirstName', ''),
-            LastName=validated_data.get('LastName', ''),
-            ProjectInvolved=validated_data.get('ProjectInvolved', 'Unassigned'),
+            first_name=validated_data.get('first_name', ''),
+            last_name=validated_data.get('last_name', ''),
+            project_involved=validated_data.get('project_involved', 'Unassigned'),
             password=validated_data['password']
         )
         return user
