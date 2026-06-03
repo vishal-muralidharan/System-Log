@@ -1,31 +1,31 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import axiosInstance from '../api/axios';
-import '../css/Signup.css';
+import React, { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import axiosInstance from '../api/axios'
+import '../css/Signup.css'
 
 const Signup = () => {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [projectInvolved, setProjectInvolved] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [projectInvolved, setProjectInvolved] = useState('')
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
     
-    const [errorMessage, setErrorMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState('')
+    const [successMessage, setSuccessMessage] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setErrorMessage('');
-        setSuccessMessage('');
+        e.preventDefault()
+        setErrorMessage('')
+        setSuccessMessage('')
 
         if (password !== confirmPassword) {
-            setErrorMessage('Passwords do not match.');
-            return;
+            setErrorMessage('Passwords do not match.')
+            return
         }
 
-        setIsLoading(true);
+        setIsLoading(true)
 
         try {
             const response = await axiosInstance.post('auth/register/', {
@@ -34,27 +34,27 @@ const Signup = () => {
                 project_involved: projectInvolved,
                 password: password,
                 password_confirm: confirmPassword
-            });
+            })
 
-            const employeeId = response.data.employee_id;
+            const employeeId = response.data.employee_id
 
-            setSuccessMessage(`Success! Your Employee ID is: ${employeeId}. Contact Administrator for Approval`);
+            setSuccessMessage(`Success! Your Employee ID is: ${employeeId}. Contact Administrator for Approval`)
             
             setTimeout(() => {
-                navigate('/login');
-            }, 2000);
+                navigate('/login')
+            }, 2000)
 
         } catch (error) {
             if (error.response && error.response.data) {
-                const firstErrorField = Object.values(error.response.data)[0];
-                setErrorMessage(firstErrorField[0]); 
+                const firstErrorField = Object.values(error.response.data)[0]
+                setErrorMessage(firstErrorField[0]) 
             } else {
-                setErrorMessage("An unexpected error occurred. Please try again.");
+                setErrorMessage("An unexpected error occurred. Please try again.")
             }
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
-    };
+    }
 
     return (
         <div className="signup-container">
@@ -132,7 +132,7 @@ const Signup = () => {
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Signup;
+export default Signup

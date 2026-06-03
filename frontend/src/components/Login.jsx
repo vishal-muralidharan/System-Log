@@ -1,50 +1,50 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import axiosInstance from '../api/axios';
-import '../css/Login.css';
+import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import axiosInstance from '../api/axios'
+import '../css/Login.css'
 
 const Login = () => {
-    const [employeeId, setEmployeeId] = useState('');
-    const [password, setPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
+    const [employeeId, setEmployeeId] = useState('')
+    const [password, setPassword] = useState('')
+    const [errorMessage, setErrorMessage] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
+    const navigate = useNavigate()
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
-        setErrorMessage('');
-        setIsLoading(true);
+        event.preventDefault()
+        setErrorMessage('')
+        setIsLoading(true)
 
         try {
             const loginResponse = await axiosInstance.post('auth/login/', {
                 employee_id: employeeId, 
                 password: password
-            });
+            })
 
-            localStorage.setItem('access_token', loginResponse.data.access);
-            localStorage.setItem('refresh_token', loginResponse.data.refresh);
-            axiosInstance.defaults.headers.Authorization = `Bearer ${loginResponse.data.access}`;
+            localStorage.setItem('access_token', loginResponse.data.access)
+            localStorage.setItem('refresh_token', loginResponse.data.refresh)
+            axiosInstance.defaults.headers.Authorization = `Bearer ${loginResponse.data.access}`
 
-            const profileResponse = await axiosInstance.get('employees/');
-            const userProfile = profileResponse.data[0];
+            const profileResponse = await axiosInstance.get('employees/')
+            const userProfile = profileResponse.data[0]
 
             if (userProfile) {
                 if (userProfile.is_active) {
                     if (userProfile.is_admin) {
-                        navigate('/admin');
+                        navigate('/admin')
                     } else {
-                        navigate('/dashboard');
+                        navigate('/dashboard')
                     }
                 } else {
-                    setErrorMessage('User does not have an active account. Contact Administrator for details.');
+                    setErrorMessage('User does not have an active account. Contact Administrator for details.')
                 }
             }
         } catch (error) {
-            setErrorMessage('Invalid credentials. Please try again.');
+            setErrorMessage('Invalid credentials. Please try again.')
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
-    };
+    }
 
     return (
         <div className="login-container">
@@ -93,7 +93,7 @@ const Login = () => {
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Login;
+export default Login

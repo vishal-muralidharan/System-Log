@@ -1,7 +1,7 @@
-import React from "react";
-import { Outlet } from 'react-router-dom';
-import '../css/Dashboard.css';
-import Sidebar from "./Sidebar";
+import React from "react"
+import { Outlet } from 'react-router-dom'
+import '../css/Dashboard.css'
+import Sidebar from "./Sidebar"
 
 const Dashboard = () => {
     return (
@@ -19,7 +19,7 @@ const Dashboard = () => {
                 </div>
             </div>
         </div>
-    );
+    )
 }
 
-export default Dashboard;
+export default Dashboard

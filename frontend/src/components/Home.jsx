@@ -1,89 +1,90 @@
-import React, {useEffect, useState} from 'react';
-import '../css/Home.css';
-import axiosInstance from '../api/axios';
+import React, { useEffect, useState } from 'react'
+import '../css/Home.css'
+import axiosInstance from '../api/axios'
 
 const Home = () => {
-    const [AttendanceData, SetAttendanceData] = useState(null)
-    const [Status, SetStatus] = useState('In-Office')
-    const [Loading, SetLoading] = useState(true)
-    const [ErrorMsg, SetError] = useState('')
+    const [attendanceData, setAttendanceData] = useState(null)
+    const [status, setStatus] = useState('In-Office')
+    const [loading, setLoading] = useState(true)
+    const [errorMsg, setErrorMsg] = useState('')
 
     useEffect(() => {
       const fetchTodayStatus = async () => {
         try {
-          const Response = await axiosInstance.get('attendance/?ordering=-LoginTime')
-          const Logs = Response.data
+          const response = await axiosInstance.get('attendance/?ordering=-login_time')
+          const logs = response.data
 
-          if (Logs.length > 0) {
-            const LatestLog = Logs[0]
+          if (logs.length > 0) {
+            const latestLog = logs[0]
 
-            const LogDate = new Date(LatestLog.LoginTime).toLocaleDateString()
-            const Today = new Date().toLocaleDateString()
+            const logDate = new Date(latestLog.login_time).toLocaleDateString()
+            const today = new Date().toLocaleDateString()
 
-            if (LogDate === Today) {
-              SetAttendanceData(LatestLog)
+            if (logDate === today) {
+              setAttendanceData(latestLog)
             }
           }
         }
-        catch (Error) {
-          console.error(Error)
-          SetError('Could not retrieve current data ')
+        catch (error) {
+          console.error(error)
+          setErrorMsg('Could not retrieve current data ')
         }
         finally {
-          SetLoading(false)
+          setLoading(false)
         }
       }
 
       fetchTodayStatus()
     }, [])
 
-    const HandleClockIn = async () => {
-      SetLoading(true)
-      SetError('')
+    const handleClockIn = async (event) => {
+      event.preventDefault() // Added to prevent the form from reloading the page
+      setLoading(true)
+      setErrorMsg('')
 
       try {
-        const Response = await axiosInstance.post('attendance/login/', {
-          WorkStatus: Status
+        const response = await axiosInstance.post('attendance/login/', {
+          work_status: status
         })
 
-        SetAttendanceData(Response.data)
+        setAttendanceData(response.data)
       }
-      catch (Error) {
-        console.error(Error)
-        SetError('Error in marking Log-In Data')
+      catch (error) {
+        console.error(error)
+        setErrorMsg('Error in marking Log-In Data')
       }
       finally {
-        SetLoading(false)
+        setLoading(false)
       }
     }
 
-    const HandleClockOut = async () => {
-      SetLoading(true)
-      SetError('')
+    const handleClockOut = async () => {
+      setLoading(true)
+      setErrorMsg('')
 
       try {
-        const Response = await axiosInstance.post('attendance/logout/')
+        const response = await axiosInstance.post('attendance/logout/')
 
-        SetAttendanceData(prev => ({
+        setAttendanceData(prev => ({
           ...prev, 
-          LogoutTime: Response.data.LogoutTime
+          logout_time: response.data.logout_time
         }))
       }
-      catch (Error) {
-        console.error(Error)
-        SetError('Error in marking Log-Out Data')
+      catch (error) {
+        console.error(error)
+        setErrorMsg('Error in marking Log-Out Data')
       }
       finally {
-        SetLoading(false)
+        setLoading(false)
       }
     }
 
-    const FormatTime = (isoString) => {
-        if (!isoString) return '--:--:--';
-        return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    };
+    const formatTime = (isoString) => {
+        if (!isoString) return '--:--:--'
+        return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    }
 
-    if (Loading) {
+    if (loading) {
       return (
         <h2 className='condition loading'>Loading your status...</h2>
       )
@@ -91,47 +92,52 @@ const Home = () => {
 
     return (
         <>
-            {ErrorMsg && <h2 className='condition error'>{ErrorMsg}</h2>}
+            {errorMsg && <h2 className='condition error'>{errorMsg}</h2>}
+            
             {/* Condition 1: Log-in not done for the day */}
-            {!AttendanceData ? (
+            {!attendanceData ? (
                 <div className='condition condition1'>
                     <h2>You have not marked Log-in for the day</h2>
-                    <form>
+                    <form onSubmit={handleClockIn}>
                         <label>Select your work status:</label>
                         <select 
-                        value={Status} 
-                        onChange={(e) => SetStatus(e.target.value)}
-                        required>
+                            value={status} 
+                            onChange={(e) => setStatus(e.target.value)}
+                            required
+                        >
                             <option value="Choose your status" disabled hidden>Choose your status</option>
                             <option value="In-Office">In-Office</option>
                             <option value="Work From Home">Work From Home</option>
                             <option value="Leave">Leave</option>
                             <option value="Client Office">Client Office</option>
                         </select>
-                        <button type='submit' onClick={HandleClockIn}>Mark Login</button>
+                        <button type='submit'>Mark Login</button>
                     </form>
                 </div>
-            ) : (AttendanceData && !AttendanceData.LogoutTime) ? (
+            ) : (attendanceData && !attendanceData.logout_time) ? (
                 <div className='condition condition2'>
                     {/* Condition 2: Log-in completed but Log-out not done for the day */}
                     <h2>You have not marked your Log-out for the day</h2>
-                    <h4>Login Time: {FormatTime(AttendanceData.LoginTime)}</h4>
-                    <h4>Status: {AttendanceData.WorkStatus}</h4>
-                    <button onClick={HandleClockOut}>Mark Logout</button>
+                    <h4>Login Time: {formatTime(attendanceData.login_time)}</h4>
+                    <h4>Status: {attendanceData.work_status}</h4>
+                    <button onClick={handleClockOut}>Mark Logout</button>
                 </div>
             ) : (
                 <div className='condition condition3'>
                     {/* Condition 3: Log-in and Log-out completed for the day */}
-                    {!(AttendanceData.WorkStatus === 'Leave') && <h2>You have marked both your Log-in and Log-out</h2>}
-                    {(AttendanceData.WorkStatus === 'Leave') && <h2>Your Leave has been marked</h2>}
-                    <h3>Login Time: {FormatTime(AttendanceData.LoginTime)}</h3>
-                    {!(AttendanceData.WorkStatus === 'Leave') && <h3>Logout Time: {FormatTime(AttendanceData.LogoutTime)}</h3>}
-                    <h3>Status: {AttendanceData.WorkStatus}</h3>
-                    {!(AttendanceData.WorkStatus === 'Leave') && <h2>Great job!</h2>}<h2>See you tomorrow!</h2>
+                    {!(attendanceData.work_status === 'Leave') && <h2>You have marked both your Log-in and Log-out</h2>}
+                    {(attendanceData.work_status === 'Leave') && <h2>Your Leave has been marked</h2>}
+                    
+                    <h3>Login Time: {formatTime(attendanceData.login_time)}</h3>
+                    {!(attendanceData.work_status === 'Leave') && <h3>Logout Time: {formatTime(attendanceData.logout_time)}</h3>}
+                    <h3>Status: {attendanceData.work_status}</h3>
+                    
+                    {!(attendanceData.work_status === 'Leave') && <h2>Great job!</h2>}
+                    <h2>See you tomorrow!</h2>
                 </div>            
             )}
         </>
-    );
+    )
 }
 
-export default Home;
+export default Home
