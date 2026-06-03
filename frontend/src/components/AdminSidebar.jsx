@@ -1,84 +1,85 @@
-import React, {useEffect, useState, useRef} from 'react'
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import '../css/Sidebar.css';
 
 const AdminSidebar = () => {
-    const NavigateTo = useNavigate()
-    const [Confirm, SetConfirm] = useState(false)
-    const ConfirmRef = useRef(null)
+    const navigate = useNavigate();
+    const [confirm, setConfirm] = useState(false);
+    const confirmRef = useRef(null);
 
-    const [Active, SetActive] = useState(() => {
+    const [active, setActive] = useState(() => {
         const savedTab = localStorage.getItem("activeTab");
         return savedTab ? savedTab : "Home";
     });
 
     useEffect(() => {
-        localStorage.setItem("activeTab", Active);
-    }, [Active]);
+        localStorage.setItem("activeTab", active);
+    }, [active]);
 
     useEffect(() => {
-        const HandleConfirmClick = (event) => {
-            if (ConfirmRef.current && !ConfirmRef.current.contains(event.target)) {
-                SetConfirm(false)
+        const handleConfirmClick = (event) => {
+            if (confirmRef.current && !confirmRef.current.contains(event.target)) {
+                setConfirm(false);
             }
-        }
+        };
 
-        const HandleConfirmScroll = () => {
-            SetConfirm(false)
-        }
+        const handleConfirmScroll = () => {
+            setConfirm(false);
+        };
 
-        if (Confirm) {
-            document.addEventListener("scroll", HandleConfirmScroll, true)
-            document.addEventListener("mousedown", HandleConfirmClick)
+        if (confirm) {
+            document.addEventListener("scroll", handleConfirmScroll, true);
+            document.addEventListener("mousedown", handleConfirmClick);
         }
 
         return () => {
-            document.removeEventListener("scroll", HandleConfirmScroll, true)
-            document.removeEventListener("mousedown", HandleConfirmClick)
-        }
-    }, [Confirm])
+            document.removeEventListener("scroll", handleConfirmScroll, true);
+            document.removeEventListener("mousedown", handleConfirmClick);
+        };
+    }, [confirm]);
 
-    const HandleLogout = () => {
-        SetConfirm(false)
+    const handleLogout = () => {
+        setConfirm(false);
 
-        localStorage.removeItem('access_token')
-        localStorage.removeItem('refresh_token')
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
         localStorage.setItem("activeTab", "Home");
-        NavigateTo('/login')
-    }
+        navigate('/login');
+    };
 
     return (
         <div className="sidebar-style">
             <ul className="sidebar-items">
                 <div className="main-items">
-                    <Link to="/admin" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => SetActive('Home')}>
-                        <li className={`list-item ${Active === 'Home' ? "active" : ""}`}>Home</li>
+                    <Link to="/admin" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => setActive('Home')}>
+                        <li className={`list-item ${active === 'Home' ? "active" : ""}`}>Home</li>
                     </Link>
-                    <Link to="/admin/logs" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => SetActive('History')}>
-                        <li className={`list-item ${Active === 'History' ? "active" : ""}`}>Log Attendance History</li>
+                    <Link to="/admin/logs" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => setActive('History')}>
+                        <li className={`list-item ${active === 'History' ? "active" : ""}`}>Log Attendance History</li>
                     </Link>
-                    <Link to="/admin/employees" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => SetActive('Profile')}>
-                        <li className={`list-item ${Active === 'Profile' ? "active" : ""}`}>Employees Data</li>
+                    <Link to="/admin/employees" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => setActive('Profile')}>
+                        <li className={`list-item ${active === 'Profile' ? "active" : ""}`}>Employees Data</li>
                     </Link>
-                    
                 </div>
                 <div>
-                    <li className="logout-item" onClick={() => SetConfirm(true)}>Logout</li>
+                    <li className="logout-item" onClick={() => setConfirm(true)}>Logout</li>
                 </div>
             </ul>
 
-            {Confirm && (
-                <div className='confirmation' ref={ConfirmRef}>
-                    <h4>Click on 'Confirm' to Logout</h4>
-                    <div className='buttons'>
-                        <button onClick={HandleLogout}>Confirm</button>
-                        <button onClick={() => SetConfirm(false)}>Cancel</button>
+            {/* Added modal-overlay wrapper for full-screen blur effect */}
+            {confirm && (
+                <div className="modal-overlay">
+                    <div className='confirmation' ref={confirmRef}>
+                        <h4>Click on 'Confirm' to Logout</h4>
+                        <div className='buttons'>
+                            <button onClick={handleLogout}>Confirm</button>
+                            <button onClick={() => setConfirm(false)}>Cancel</button>
+                        </div>
                     </div>
                 </div>
             )}
         </div>
-    )
-}
+    );
+};
 
-
-export default AdminSidebar
+export default AdminSidebar;

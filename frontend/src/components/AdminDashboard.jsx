@@ -1,8 +1,7 @@
 import React from "react";
-import { useNavigate, Link, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import '../css/Dashboard.css';
 import AdminSidebar from "./AdminSidebar";
-import Home from "./Home";
 
 const AdminDashboard = () => {
     return (
@@ -22,6 +21,5 @@ const AdminDashboard = () => {
         </div>
     );
 }
-
 
 export default AdminDashboard;
