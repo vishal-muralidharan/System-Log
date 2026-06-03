@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableOpacity, 
-  View, Alert, ActivityIndicator } from 'react-native'
+  View, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native'
 import { useRouter, Link } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axiosInstance from '../../src/api/axios'
@@ -63,10 +63,13 @@ export default function SignupScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView 
+      style={styles.container} 
+      behavior={'padding'}
+    >
       <Text style={styles.title}>Welcome</Text>
+      
       <View style={styles.card}>
-        
         <View style={styles.innerCard}>
             <Text style={styles.label}>First Name</Text>
             <TextInput 
@@ -118,14 +121,13 @@ export default function SignupScreen() {
             </TouchableOpacity>
         </View>
         
-        
         <Link href="/(auth)/login" asChild>
           <TouchableOpacity style={{ marginTop: 15 }}>
             <Text style={styles.linkText}>Already have an account? Login</Text>
           </TouchableOpacity>
         </Link>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   )
 }
 
