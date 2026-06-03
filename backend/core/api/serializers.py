@@ -9,7 +9,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         required=False, 
         style={'input_type': 'password'}
     )
-    EmployeeId = serializers.CharField(read_only=True)
+    EmployeeId = serializers.CharField(read_only=True) #employee_id
 
     class Meta:
         model = Employee

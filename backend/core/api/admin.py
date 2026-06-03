@@ -15,44 +15,44 @@ class CustomEmployeeAdmin(UserAdmin):
     form = SimpleEmployeeForm
     add_form = SimpleEmployeeForm
 
-    list_display = ('EmployeeId', 'ProjectInvolved', 'IsAdmin', 'IsActive', 'last_login')
-    search_fields = ('EmployeeId', 'ProjectInvolved')
-    list_filter = ('IsAdmin', 'IsActive', 'ProjectInvolved')
-    ordering = ('EmployeeId',)
+    list_display = ('employee_id', 'project_involved', 'is_admin', 'is_active', 'last_login')
+    search_fields = ('employee_id', 'project_involved')
+    list_filter = ('is_admin', 'is_active', 'project_involved')
+    ordering = ('employee_id',)
 
     filter_horizontal = ()
 
     fieldsets = (
-        ('Authentication', {'fields': ('EmployeeId', 'password')}),
-        ('Work Info', {'fields': ('ProjectInvolved',)}),
-        ('Permissions', {'fields': ('IsAdmin', 'IsActive')}),
+        ('Authentication', {'fields': ('employee_id', 'password')}),
+        ('Work Info', {'fields': ('project_involved',)}),
+        ('Permissions', {'fields': ('is_admin', 'is_active')}),
         ('Important dates', {'fields': ('last_login',)}),
     )
 
     add_fieldsets = (   
         (None, {
             'classes': ('wide',),
-            'fields': ('EmployeeId', 'password', 'ProjectInvolved', 'IsAdmin', 'IsActive'),
+            'fields': ('employee_id', 'password', 'project_involved', 'is_admin', 'is_active'),
         }),
     )
 
     def get_readonly_fields(self, request, obj=None):
         if obj: 
-            return ('EmployeeId',)
+            return ('employee_id',)
         return ()
 
     def get_changeform_initial_data(self, request):
         initial = super().get_changeform_initial_data(request)
         
-        LastEmployee = Employee.objects.filter(EmployeeId__startswith='EMP').order_by('id').last()
+        last_employee = Employee.objects.filter(employee_id__startswith='EMP').order_by('id').last()
         
-        if LastEmployee:
-            LastIdNum = int(LastEmployee.EmployeeId.replace('EMP', ''))
-            NewIdNum = LastIdNum + 1
+        if last_employee:
+            last_id_num = int(last_employee.employee_id.replace('EMP', ''))
+            new_id_num = last_id_num + 1
         else:
-            NewIdNum = 1
+            new_id_num = 1
 
-        initial['EmployeeId'] = f"EMP{NewIdNum:04d}"
+        initial['employee_id'] = f"EMP{new_id_num:04d}"
         return initial
 
 
@@ -64,7 +64,7 @@ class CustomEmployeeAdmin(UserAdmin):
 
 @admin.register(AttendanceLog)
 class AttendanceLogAdmin(admin.ModelAdmin):
-    list_display = ('EmployeeRef', 'WorkStatus', 'LoginTime', 'LogoutTime')
-    list_filter = ('WorkStatus', 'LoginTime')
-    search_fields = ('EmployeeRef__EmployeeId',)
-    date_hierarchy = 'LoginTime'
+    list_display = ('employee_ref', 'work_status', 'login_time', 'logout_time')
+    list_filter = ('work_status', 'login_time')
+    search_fields = ('employee_ref__employee_id',)
+    date_hierarchy = 'login_time'
