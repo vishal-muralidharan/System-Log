@@ -1,78 +1,74 @@
-import React, {useEffect, useState} from 'react';
-import '../css/History.css';
-import axiosInstance from '../api/axios';
+import React, { useEffect, useState } from 'react'
+import '../css/History.css'
+import axiosInstance from '../api/axios'
 
 const AdminLogs = () => {
-  const [HistoryData, SetHistoryData] = useState(null)
-  const [Loading, SetLoading] = useState(true)
-  const [ErrorMsg, SetError] = useState('')
-  const [Search, SetSearch] = useState('')
-  const [Filter, SetFilter] = useState('')
-  const [StatusFilter, SetStatusFilter] = useState('')
+  const [historyData, setHistoryData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [errorMsg, setErrorMsg] = useState('')
+  const [search, setSearch] = useState('')
+  const [filter, setFilter] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
 
   useEffect(() => {
-      const fetchHistoryData = async () => {
-        try {
-          const Response = await axiosInstance.get('attendance/?ordering=LoginTime')
-          const Logs = Response.data
-          SetHistoryData(Logs)
-        }
-        catch (Error) {
-          console.error(Error)
-          SetError('Could not retrieve current data')
-        }
-        finally {
-          SetLoading(false)
-        }
+    const fetchHistoryData = async () => {
+      try {
+        const response = await axiosInstance.get('attendance/?ordering=login_time')
+        const logs = response.data
+        setHistoryData(logs)
+      } catch (error) {
+        console.error(error)
+        setErrorMsg('Could not retrieve current data')
+      } finally {
+        setLoading(false)
       }
+    }
 
-      fetchHistoryData()
-    }, []
-  )
+    fetchHistoryData()
+  }, [])
   
-  const HandleDelete = async (ID) => {
-    if (!window.confirm('You are about to permanently delete a record. Are you sure?'))
+  const handleDelete = async (id) => {
+    if (!window.confirm('You are about to permanently delete a record. Are you sure?')) {
       return
+    }
 
     try {
-      axiosInstance.delete(`/attendance/${ID}/`)
-      SetHistoryData(Prev => Prev.filter(Logs => Logs.LogId !== ID))
-    }
-    catch (Error) {
-      console.error(Error)
-      SetError('Could not delete Log Data')
+      await axiosInstance.delete(`/attendance/${id}/`)
+      setHistoryData(prev => prev.filter(log => log.log_id !== id))
+    } catch (error) {
+      console.error(error)
+      setErrorMsg('Could not delete Log Data')
     }
   }
 
-  const FilteredLogs = HistoryData ? HistoryData.filter(Log => {
-    const SafeSearch = (Search || "").toLowerCase()
-    const SearchMatch = Log.EmployeeStringId.includes(SafeSearch)
+  const filteredLogs = historyData ? historyData.filter(log => {
+    const safeSearch = (search || "").toLowerCase()
+    const searchMatch = log.employee_string_id.toLowerCase().includes(safeSearch)
 
-    let DateMatch = true
-    if (Filter && Log.LoginTime) {
-      const LogDate = new Date(Log.LoginTime).setHours(0, 0, 0, 0)
-      const SelectedDate = new Date(Filter).setHours(0, 0, 0, 0)
-
-      DateMatch = LogDate <= SelectedDate
+    let dateMatch = true
+    if (filter && log.login_time) {
+      const logDate = new Date(log.login_time).setHours(0, 0, 0, 0)
+      const selectedDate = new Date(filter).setHours(0, 0, 0, 0)
+      dateMatch = logDate <= selectedDate
     }
 
-    const SafeStatus = (StatusFilter || "")
-    const StatusMatch = Log.WorkStatus.includes(SafeStatus)
+    const safeStatus = (statusFilter || "")
+    const statusMatch = log.work_status.includes(safeStatus)
 
-    return SearchMatch && DateMatch && StatusMatch
+    return searchMatch && dateMatch && statusMatch
   }) : []
 
-  const FormatTime = (isoString) => {
-    if (!isoString) return '--:--:--';
-      return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  };
+  const formatTime = (isoString) => {
+    if (!isoString) return '--:--:--'
+    return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  }
 
-  const FormatDate = (IsoString) => {
-        if (!IsoString) return '--';
-        return new Date(IsoString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  };
+  const formatDate = (isoString) => {
+    if (!isoString) return '--'
+    return new Date(isoString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+  }
 
-  if (Loading) {
+  if (loading) {
     return (
       <h2 className='condition loading'>Loading your history...</h2>
     )
@@ -86,34 +82,35 @@ const AdminLogs = () => {
           <input 
             type='text' 
             placeholder='Search Employee ID' 
-            value={Search} 
-            onChange={(e) => SetSearch(e.target.value)}
+            value={search} 
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         <div className='search-field'>
           <label>Logs on or before:</label>
           <input 
             type='date' 
-            value={Filter} 
-            onChange={(e) => SetFilter(e.target.value)} 
+            value={filter} 
+            onChange={(e) => setFilter(e.target.value)} 
           />
         </div>
         <div className='search-field'>
           <label>Logs Status:</label>
           <select 
-            value={StatusFilter} 
-            onChange={(e) => SetStatusFilter(e.target.value)}
-            required>
-                <option value="">Show All</option>
-                <option value="In-Office">In-Office</option>
-                <option value="Work From Home">Work From Home</option>
-                <option value="Leave">Leave</option>
-                <option value="Client Office">Client Office</option>
+            value={statusFilter} 
+            onChange={(e) => setStatusFilter(e.target.value)}
+            required
+          >
+            <option value="">Show All</option>
+            <option value="In-Office">In-Office</option>
+            <option value="Work From Home">Work From Home</option>
+            <option value="Leave">Leave</option>
+            <option value="Client Office">Client Office</option>
           </select>
         </div>
       </div>
 
-      {FilteredLogs.length === 0 ? <h2><br />No Matching Logs</h2> :
+      {filteredLogs.length === 0 ? <h2><br />No Matching Logs</h2> :
       <table>
         <thead>
           <tr>
@@ -127,28 +124,28 @@ const AdminLogs = () => {
           </tr>
         </thead>
         <tbody>
-          {FilteredLogs.map((Data) => (
-            <tr key={Data.LogId} 
-            className={`${Data.WorkStatus === 'Leave' ? 
-            'leave' : (Data.WorkStatus === 'In-Office' ? 'office': 
-            (Data.WorkStatus === 'Client Office' ? 'client-office': 'wfh'))}`}>
-              <td>{Data.LogId}</td>
-              <td>{Data.EmployeeStringId}</td>
-              <td>{FormatDate(Data.LoginTime)}</td>
-              <td>{Data.WorkStatus}</td>  
-              {Data.WorkStatus === 'Leave' ? (
-                  <td colSpan={2}>{FormatTime(Data.LoginTime)}</td>
+          {filteredLogs.map((data) => (
+            <tr key={data.log_id} 
+              className={`${data.work_status === 'Leave' ? 
+              'leave' : (data.work_status === 'In-Office' ? 'office': 
+              (data.work_status === 'Client Office' ? 'client-office': 'wfh'))}`}>
+              <td>{data.log_id}</td>
+              <td>{data.employee_string_id}</td>
+              <td>{formatDate(data.login_time)}</td>
+              <td>{data.work_status}</td>  
+              {data.work_status === 'Leave' ? (
+                <td colSpan={2}>{formatTime(data.login_time)}</td>
               ) : (
-                  <>
-                      <td>{FormatTime(Data.LoginTime)}</td>
-                      {Data.LogoutTime === null ? (
-                          <td>Unmarked</td>
-                      ) : (
-                          <td>{FormatTime(Data.LogoutTime)}</td> 
-                      )}
-                  </>
+                <>
+                  <td>{formatTime(data.login_time)}</td>
+                  {data.logout_time === null ? (
+                    <td>Unmarked</td>
+                  ) : (
+                    <td>{formatTime(data.logout_time)}</td> 
+                  )}
+                </>
               )}
-              <td><button onClick={() => HandleDelete(Data.LogId)}>Delete</button></td>
+              <td><button onClick={() => handleDelete(data.log_id)}>Delete</button></td>
             </tr>
           ))}
         </tbody>

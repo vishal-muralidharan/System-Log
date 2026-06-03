@@ -1,48 +1,40 @@
-import React, {useEffect, useState} from 'react';
-import '../css/Home.css';
-import axiosInstance from '../api/axios';
+import React, { useEffect, useState } from 'react'
+import '../css/Home.css'
+import axiosInstance from '../api/axios'
 
 const AdminHome = () => {
-  const [HistoryData, SetHistoryData] = useState(null)
-  const [Loading, SetLoading] = useState(true)
-  const [ErrorMsg, SetError] = useState('')
-  const Today = new Date().toLocaleDateString()
+  const [historyData, setHistoryData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [errorMsg, setErrorMsg] = useState('')
+  const today = new Date().toLocaleDateString()
 
   useEffect(() => {
-      const fetchHistoryData = async () => {
-        try {
-          const Response = await axiosInstance.get('attendance/?ordering=LoginTime')
-          const Logs = Response.data
-          SetHistoryData(Logs)
-        }
-        catch (Error) {
-          console.error(Error)
-          SetError('Could not retrieve current data')
-        }
-        finally {
-          SetLoading(false)
-        }
+    const fetchHistoryData = async () => {
+      try {
+        const response = await axiosInstance.get('attendance/?ordering=login_time')
+        const logs = response.data
+        setHistoryData(logs)
+      } catch (error) {
+        console.error(error)
+        setErrorMsg('Could not retrieve current data')
+      } finally {
+        setLoading(false)
       }
+    }
 
-      fetchHistoryData()
-    }, []
-  )
+    fetchHistoryData()
+  }, [])
 
-  const TodaysLogs =  HistoryData ? HistoryData.filter(Emp => {
-    return (new Date(Emp.LoginTime).toLocaleDateString() === Today)
+  const todaysLogs = historyData ? historyData.filter(emp => {
+    return (new Date(emp.login_time).toLocaleDateString() === today)
   }) : []
   
-  const FormatTime = (isoString) => {
-    if (!isoString) return '--:--:--';
-      return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  };
+  const formatTime = (isoString) => {
+    if (!isoString) return '--:--:--'
+    return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  }
 
-  const FormatDate = (IsoString) => {
-        if (!IsoString) return '--';
-        return new Date(IsoString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  };
-
-  if (Loading) {
+  if (loading) {
     return (
       <h2 className='condition loading'>Loading your history...</h2>
     )
@@ -50,9 +42,9 @@ const AdminHome = () => {
 
   return (
     <div className='outer'>
-      {TodaysLogs.length === 0 ? <h2><br />No Logs for Today ({Today})</h2> :
+      {todaysLogs.length === 0 ? <h2><br />No Logs for Today ({today})</h2> :
       <>
-        <h2>Today's Attendance Log ({Today})</h2>
+        <h2>Today's Attendance Log ({today})</h2>
 
         <table>
           <thead>
@@ -65,27 +57,27 @@ const AdminHome = () => {
             </tr>
           </thead>
           <tbody>
-            {TodaysLogs.map((Data) => (
-                  <tr key={Data.LogId} 
-                  className={`${Data.WorkStatus === 'Leave' ? 
-                  'leave' : (Data.WorkStatus === 'In-Office' ? 'office': 
-                  (Data.WorkStatus === 'Client Office' ? 'client-office': 'wfh'))}`}>
-                    <td>{Data.EmployeeStringId}</td>
-                    <td>{Data.LogId}</td>
-                    <td>{Data.WorkStatus}</td>  
-                    {Data.WorkStatus === 'Leave' ? (
-                        <td colSpan={2}>{FormatTime(Data.LoginTime)}</td>
+            {todaysLogs.map((data) => (
+              <tr key={data.log_id} 
+                className={`${data.work_status === 'Leave' ? 
+                'leave' : (data.work_status === 'In-Office' ? 'office': 
+                (data.work_status === 'Client Office' ? 'client-office': 'wfh'))}`}>
+                <td>{data.employee_string_id}</td>
+                <td>{data.log_id}</td>
+                <td>{data.work_status}</td>  
+                {data.work_status === 'Leave' ? (
+                  <td colSpan={2}>{formatTime(data.login_time)}</td>
+                ) : (
+                  <>
+                    <td>{formatTime(data.login_time)}</td>
+                    {data.logout_time === null ? (
+                      <td>Unmarked</td>
                     ) : (
-                        <>
-                            <td>{FormatTime(Data.LoginTime)}</td>
-                            {Data.LogoutTime === null ? (
-                                <td>Unmarked</td>
-                            ) : (
-                                <td>{FormatTime(Data.LogoutTime)}</td> 
-                            )}
-                        </>
+                      <td>{formatTime(data.logout_time)}</td> 
                     )}
-                  </tr>
+                  </>
+                )}
+              </tr>
             ))} 
           </tbody>
         </table>
