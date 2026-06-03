@@ -4,45 +4,48 @@ import axiosInstance from '../api/axios';
 import '../css/Login.css';
 
 const Login = () => {
-    const [EmployeeId, SetEmployeeId] = useState('');
-    const [Password, SetPassword] = useState('');
-    const [ErrorMessage, SetErrorMessage] = useState('');
-    const [IsLoading, SetIsLoading] = useState(false);
-    const NavigateTo = useNavigate();
+    // Updated to standard React camelCase
+    const [employeeId, setEmployeeId] = useState('');
+    const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const HandleSubmit = async (Event) => {
-        Event.preventDefault();
-        SetErrorMessage('');
-        SetIsLoading(true);
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setErrorMessage('');
+        setIsLoading(true);
 
         try {
-            const LoginResponse = await axiosInstance.post('auth/login/', {
-                EmployeeId: EmployeeId,
-                password: Password
+            // 🚨 UPDATED: Keys sent to Django must be snake_case
+            const loginResponse = await axiosInstance.post('auth/login/', {
+                employee_id: employeeId, 
+                password: password
             });
 
-            localStorage.setItem('access_token', LoginResponse.data.access);
-            localStorage.setItem('refresh_token', LoginResponse.data.refresh);
-            axiosInstance.defaults.headers.Authorization = `Bearer ${LoginResponse.data.access}`;
+            localStorage.setItem('access_token', loginResponse.data.access);
+            localStorage.setItem('refresh_token', loginResponse.data.refresh);
+            axiosInstance.defaults.headers.Authorization = `Bearer ${loginResponse.data.access}`;
 
-            const ProfileResponse = await axiosInstance.get('employees/');
-            const UserProfile = ProfileResponse.data[0];
+            const profileResponse = await axiosInstance.get('employees/');
+            const userProfile = profileResponse.data[0];
 
-            if (UserProfile) {
-                if (UserProfile.IsActive) {
-                    if (UserProfile.IsAdmin) {
-                        NavigateTo('/admin');
+            if (userProfile) {
+                // 🚨 UPDATED: Reading properties from Django must be snake_case
+                if (userProfile.is_active) {
+                    if (userProfile.is_admin) {
+                        navigate('/admin');
                     } else {
-                        NavigateTo('/dashboard');
+                        navigate('/dashboard');
                     }
                 } else {
-                    SetErrorMessage('User does not have an active account. Contact Administrator for details.');
+                    setErrorMessage('User does not have an active account. Contact Administrator for details.');
                 }
             }
-        } catch (ErrorObj) {
-            SetErrorMessage('Invalid credentials. Please try again.');
+        } catch (error) {
+            setErrorMessage('Invalid credentials. Please try again.');
         } finally {
-            SetIsLoading(false);
+            setIsLoading(false);
         }
     };
 
@@ -52,12 +55,12 @@ const Login = () => {
                 
                 <h2 className="login-title">Welcome back</h2> <br />
                 
-                <form onSubmit={HandleSubmit}>
+                <form onSubmit={handleSubmit}>
                     <label className="login-label">Employee ID</label>
                     <input
                         type="text"
-                        value={EmployeeId}
-                        onChange={(Event) => SetEmployeeId(Event.target.value)}
+                        value={employeeId}
+                        onChange={(event) => setEmployeeId(event.target.value)}
                         className="login-input"
                         placeholder="e.g. EMP0001"
                         required
@@ -66,8 +69,8 @@ const Login = () => {
                     <label className="login-label">Password</label>
                     <input
                         type="password"
-                        value={Password}
-                        onChange={(Event) => SetPassword(Event.target.value)}
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
                         className="login-input"
                         placeholder="Enter your password"
                         required
@@ -75,15 +78,15 @@ const Login = () => {
                     
                     <button 
                         type="submit" 
-                        disabled={IsLoading} 
+                        disabled={isLoading} 
                         className="login-button"
                     >
-                        {IsLoading ? 'Signing in...' : 'Sign In'}
+                        {isLoading ? 'Signing in...' : 'Sign In'}
                     </button>
 
-                    {ErrorMessage && (
+                    {errorMessage && (
                         <div className="login-error">
-                            {ErrorMessage}
+                            {errorMessage}
                         </div>
                     )}
                 </form>
