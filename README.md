@@ -1,6 +1,6 @@
 # System Log - Attendance Management System
 
-**System Log** is a modern, cross-platform Employee Attendance Tracking and Management System. Designed to replace outdated spreadsheets and paper logs, it provides a secure, automated way for companies to track when and where their employees are working, while offering HR and administrators a powerful "God-mode" dashboard to oversee the entire workforce.
+**System Log** is a modern, cross-platform Employee Attendance Tracking and Management System. Designed to replace outdated spreadsheets and paper logs, it provides a secure, automated way for companies to track when and where their employees are working, while offering HR and administrators a powerful dashboard to oversee the entire workforce.
 
 ## 📖 Purpose & Overview
 
@@ -12,17 +12,16 @@ The project implements strict **Role-Based Access Control (RBAC)**, meaning the 
 
 ## ✨ Key Features
 
-### For Standard Employees (Web & Mobile)
+### For Standard Employees
 * **Automated Onboarding:** Employees sign up by entering their name and project. The system automatically generates and assigns a secure, unique `EMP#####` ID to prevent collisions.
 * **Daily Punch-Clock:** A minimalist home screen to select daily work status and "Clock In." The system tracks active shifts and provides a "Clock Out" button.
-* **Attendance History:** A clean, tabular view of all past shifts, formatted beautifully with localized dates and times.
+* **Attendance History:** A clean, tabular view of all past shifts, formatted with localized dates and times.
 * **Profile Management:** A read-only view of their corporate identity, active status, and project assignments.
 
-### For Administrators (Web Portal)
+### For Administrators
 * **Company Overview:** A live feed of all corporate attendance logs.
-* **Dynamic Search & Filtering:** Admins can search for specific employee logs or filter records *before* a specific date.
-* **Data Management:** Direct capabilities to permanently delete erroneous logs or terminate employee accounts.
-* **Auto-Close Protocol:** A manual trigger that sweeps the database for employees who forgot to clock out on previous days and forcibly closes their shifts.
+* **Dynamic Search & Filtering:** Admins can search for specific employee logs or filter records in specific date ranges.
+* **Data Management:** Direct capabilities to permanently delete attendance logs or terminate employee accounts.
 
 ---
 
