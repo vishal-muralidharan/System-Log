@@ -1,63 +1,63 @@
-import React, { useEffect, useState } from 'react';
-import axiosInstance from '../api/axios';
-import '../css/Profile.css';
+import React, { useEffect, useState } from 'react'
+import axiosInstance from '../api/axios'
+import '../css/Profile.css'
 
 const Profile = () => {
-    const [ProfileData, SetProfileData] = useState(null);
-    const [IsLoading, SetIsLoading] = useState(true);
-    const [ErrorMessage, SetErrorMessage] = useState('');
+    const [profileData, setProfileData] = useState(null)
+    const [isLoading, setIsLoading] = useState(true)
+    const [errorMessage, setErrorMessage] = useState('')
 
     useEffect(() => {
-        const FetchProfile = async () => {
+        const fetchProfile = async () => {
             try {
-                const Response = await axiosInstance.get('employees/');
+                const response = await axiosInstance.get('employees/')
                 
-                if (Response.data && Response.data.length > 0) {
-                    SetProfileData(Response.data[0]);
+                if (response.data && response.data.length > 0) {
+                    setProfileData(response.data[0])
                 } else {
-                    SetErrorMessage('Profile data not found.');
+                    setErrorMessage('Profile data not found.')
                 }
-            } catch (ErrorObj) {
-                console.error(ErrorObj);
-                SetErrorMessage('Failed to load profile details.');
+            } catch (errorObj) {
+                console.error(errorObj)
+                setErrorMessage('Failed to load profile details.')
             } finally {
-                SetIsLoading(false);
+                setIsLoading(false)
             }
-        };
+        }
 
-        FetchProfile();
-    }, []);
+        fetchProfile()
+    }, [])
 
-    if (IsLoading) return <div className="loading-text">Loading profile...</div>;
+    if (isLoading) return <div className="loading-text">Loading profile...</div>
 
     return (
         <div className="profile-container">
             <h2 className="profile-title">Employee Profile</h2>
 
             <div className="profile-card">
-                {ErrorMessage && <div className="error-message">{ErrorMessage}</div>}
+                {errorMessage && <div className="error-message">{errorMessage}</div>}
 
-                {ProfileData && (
+                {profileData && (
                     <div>
                         <div className="profile-avatar">
-                            {ProfileData.EmployeeId ? ProfileData.EmployeeId.slice(-2) : 'ID'}
+                            {profileData.employee_id ? profileData.employee_id.slice(-2) : 'ID'}
                         </div>
 
                         <div>
-                            <span className={`profile-badge ${ProfileData.IsAdmin ? 'badge-admin' : 'badge-standard'}`}>
-                                {ProfileData.IsAdmin ? 'Administrator' : 'Standard Employee'}
+                            <span className={`profile-badge ${profileData.is_admin ? 'badge-admin' : 'badge-standard'}`}>
+                                {profileData.is_admin ? 'Administrator' : 'Standard Employee'}
                             </span>
                         </div>
 
                         <div className="profile-label">Employee ID</div>
-                        <div className="profile-value">{ProfileData.EmployeeId}</div>
+                        <div className="profile-value">{profileData.employee_id}</div>
 
                         <div className="profile-label">Assigned Project</div>
-                        <div className="profile-value">{ProfileData.ProjectInvolved || 'Unassigned'}</div>
+                        <div className="profile-value">{profileData.project_involved || 'Unassigned'}</div>
 
                         <div className="profile-label">Account Status</div>
                         <div className="profile-value no-border">
-                            {ProfileData.IsActive ? (
+                            {profileData.is_active ? (
                                 <span className="status-active">Active</span>
                             ) : (
                                 <span className="status-inactive">Inactive</span>
@@ -67,7 +67,7 @@ const Profile = () => {
                 )}
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Profile;
+export default Profile

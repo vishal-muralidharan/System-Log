@@ -1,25 +1,25 @@
-import React, {useEffect, useState} from 'react';
-import '../css/History.css';
-import axiosInstance from '../api/axios';
+import React, { useEffect, useState } from 'react'
+import '../css/History.css'
+import axiosInstance from '../api/axios'
 
 const History = () => {
-  const [HistoryData, SetHistoryData] = useState(null)
-  const [Loading, SetLoading] = useState(true)
-  const [ErrorMsg, SetError] = useState('')
+  const [historyData, setHistoryData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [errorMsg, setErrorMsg] = useState('')
 
   useEffect(() => {
       const fetchHistoryData = async () => {
         try {
-          const Response = await axiosInstance.get('attendance/?ordering=LoginTime')
-          const Logs = Response.data
-          SetHistoryData(Logs)
+          const response = await axiosInstance.get('attendance/?ordering=login_time')
+          const logs = response.data
+          setHistoryData(logs)
         }
-        catch (Error) {
-          console.error(Error)
-          SetError('Could not retrieve current data')
+        catch (error) {
+          console.error(error)
+          setErrorMsg('Could not retrieve current data')
         }
         finally {
-          SetLoading(false)
+          setLoading(false)
         }
       }
 
@@ -27,18 +27,17 @@ const History = () => {
     }, []
   )
   
+  const formatTime = (isoString) => {
+    if (!isoString) return '--:--:--'
+      return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  }
 
-  const FormatTime = (isoString) => {
-    if (!isoString) return '--:--:--';
-      return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  };
+  const formatDate = (isoString) => {
+        if (!isoString) return '--'
+        return new Date(isoString).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' })
+  }
 
-  const FormatDate = (IsoString) => {
-        if (!IsoString) return '--';
-        return new Date(IsoString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  };
-
-  if (Loading) {
+  if (loading) {
     return (
       <h2 className='condition loading'>Loading your history...</h2>
     )
@@ -46,7 +45,7 @@ const History = () => {
 
   return (
     <div className='outer'>
-      {HistoryData.length === 0 ? <h2><br />No Attendance Records Marked yet.</h2>:
+      {historyData.length === 0 ? <h2><br />No Attendance Records Marked yet.</h2>:
       <div>
         <h2>Attendance Log History</h2>
         <table>
@@ -60,16 +59,16 @@ const History = () => {
             </tr>
           </thead>
           <tbody>
-            {HistoryData.map((Data) => (
-              <tr key={Data.LogId} 
-              className={`${Data.WorkStatus === 'Leave' ? 
-              'leave' : (Data.WorkStatus === 'In-Office' ? 'office': 
-              (Data.WorkStatus === 'Client Office' ? 'client-office': 'wfh'))}`}>
-                <td>{Data.LogId}</td>
-                <td>{FormatDate(Data.LoginTime)}</td>
-                <td>{Data.WorkStatus}</td>
-                <td>{FormatTime(Data.LoginTime)}</td>
-                <td>{Data.LogoutTime === null ? 'Unmarked' : (Data.WorkStatus === 'Leave' ? '-' : FormatTime(Data.LogoutTime))}</td>
+            {historyData.map((data) => (
+              <tr key={data.log_id} 
+              className={`${data.work_status === 'Leave' ? 
+              'leave' : (data.work_status === 'In-Office' ? 'office': 
+              (data.work_status === 'Client Office' ? 'client-office': 'wfh'))}`}>
+                <td>{data.log_id}</td>
+                <td>{formatDate(data.login_time)}</td>
+                <td>{data.work_status}</td>
+                <td>{formatTime(data.login_time)}</td>
+                <td>{data.logout_time === null ? 'Unmarked' : (data.work_status === 'Leave' ? '-' : formatTime(data.logout_time))}</td>
               </tr>
             ))}
           </tbody>
@@ -80,4 +79,4 @@ const History = () => {
   )
 }
 
-export default History;
+export default History
