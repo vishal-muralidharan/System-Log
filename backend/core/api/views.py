@@ -19,47 +19,47 @@ class EmployeeViewSet(viewsets.ModelViewSet):
 
     # For Admin Sorting, Searching and Filtering
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['ProjectInvolved', 'IsActive', 'IsAdmin']
-    search_fields = ['EmployeeId']
-    ordering_fields = ['id', 'EmployeeId']
+    filterset_fields = ['project_involved', 'is_active', 'is_admin']
+    search_fields = ['employee_id']
+    ordering_fields = ['id', 'employee_id']
 
     def get_queryset(self):
-        User = self.request.user
-        if User.IsAdmin:
+        user = self.request.user
+        if user.is_admin:
             return Employee.objects.all()
-        return Employee.objects.filter(id=User.id)
+        return Employee.objects.filter(id=user.id)
     
     def create(self, request, *args, **kwargs):
-        if not request.user.IsAdmin:
-            return Response({"Error": "Only admins can add employees."}, status=403)
+        if not request.user.is_admin:
+            return Response({"error": "Only admins can add employees."}, status=403)
         return super().create(request, *args, **kwargs)
     
     def destroy(self, request, *args, **kwargs):
-        if not request.user.IsAdmin:
-            return Response({"Error": "Only admins can delete employee data."}, status=403)
+        if not request.user.is_admin:
+            return Response({"error": "Only admins can delete employee data."}, status=403)
         return super().destroy(request, *args, **kwargs)
     
     def retrieve(self, request, *args, **kwargs):
-        EmployeeInstance = self.get_object()
-        SerializedEmployee = self.get_serializer(EmployeeInstance)
+        employee_instance = self.get_object()
+        serialized_employee = self.get_serializer(employee_instance)
         
-        ResponseData = SerializedEmployee.data
+        response_data = serialized_employee.data
 
-        Logs = AttendanceLog.objects.filter(EmployeeRef=EmployeeInstance).order_by('-LoginTime')
+        logs = AttendanceLog.objects.filter(employee_ref=employee_instance).order_by('-login_time')
         
-        SerializedLogs = AttendanceSerializer(Logs, many=True)
-        ResponseData['AttendanceHistory'] = SerializedLogs.data
+        serialized_logs = AttendanceSerializer(logs, many=True)
+        response_data['attendance_history'] = serialized_logs.data
 
-        return Response(ResponseData, status=200)
+        return Response(response_data, status=200)
     
     def update(self, request, *args, **kwargs):
-        if not request.user.IsAdmin and 'IsAdmin' in request.data:
-            return Response({"Error": "You do not have permission to change admin status."}, status=403)
+        if not request.user.is_admin and 'is_admin' in request.data:
+            return Response({"error": "You do not have permission to change admin status."}, status=403)
         return super().update(request, *args, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
-        if not request.user.IsAdmin and 'IsAdmin' in request.data:
-            return Response({"Error": "You do not have permission to change admin status."}, status=403)
+        if not request.user.is_admin and 'is_admin' in request.data:
+            return Response({"error": "You do not have permission to change admin status."}, status=403)
         return super().partial_update(request, *args, **kwargs)
 
 
@@ -71,64 +71,64 @@ class AttendanceLogViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['WorkStatus', 'EmployeeRef'] 
-    search_fields = ['EmployeeRef__EmployeeId']
-    ordering_fields = ['LoginTime', 'LogoutTime']
+    filterset_fields = ['work_status', 'employee_ref'] 
+    search_fields = ['employee_ref__employee_id']
+    ordering_fields = ['login_time', 'logout_time']
 
     def get_queryset(self):
-        User = self.request.user
-        if User.IsAdmin:
+        user = self.request.user
+        if user.is_admin:
             return AttendanceLog.objects.all()
-        return AttendanceLog.objects.filter(EmployeeRef=User)
+        return AttendanceLog.objects.filter(employee_ref=user)
 
     @action(detail=False, methods=['POST']) # Marks the Login of Employees
     def login(self, request):
-        Date = timezone.now().date()
+        date = timezone.now().date()
 
-        LoggedToday = AttendanceLog.objects.filter(
-            EmployeeRef=request.user,
-            LoginTime__date=Date,
+        logged_today = AttendanceLog.objects.filter(
+            employee_ref=request.user,
+            login_time__date=date,
         ).exists()
 
-        if LoggedToday:
-            return Response({"Error": "Cannot have 2 logins for the same day"}, status=400)
+        if logged_today:
+            return Response({"error": "Cannot have 2 logins for the same day"}, status=400)
 
-        Status = request.data.get('WorkStatus', 'In-Office')
+        status = request.data.get('work_status', 'In-Office')
 
-        NewLog = AttendanceLog.objects.create(
-            EmployeeRef = request.user,
-            WorkStatus = Status
+        new_log = AttendanceLog.objects.create(
+            employee_ref=request.user,
+            work_status=status
         )
 
-        if Status.lower() == 'leave':
-            NewLog.LogoutTime = timezone.now()
+        if status.lower() == 'leave':
+            new_log.logout_time = timezone.now()
 
-        NewLog.save()
+        new_log.save()
 
-        SerializedData = self.get_serializer(NewLog)
-        return Response(SerializedData.data, status=201)
+        serialized_data = self.get_serializer(new_log)
+        return Response(serialized_data.data, status=201)
     
     @action(detail=False, methods=['POST']) # Marks the Logout of Employees
     def logout(self, request):
-        Date = timezone.now().date()
+        date = timezone.now().date()
         
-        CloseLog = AttendanceLog.objects.filter(
-            EmployeeRef=request.user,
-            LoginTime__date=Date,
-            LogoutTime__isnull=True
+        close_log = AttendanceLog.objects.filter(
+            employee_ref=request.user,
+            login_time__date=date,
+            logout_time__isnull=True
         ).first()
 
-        if CloseLog:
-            if CloseLog.WorkStatus.lower() == 'leave':
-                return Response({"Error": "Logout not required for a leave"}, status=400)
+        if close_log:
+            if close_log.work_status.lower() == 'leave':
+                return Response({"error": "Logout not required for a leave"}, status=400)
             
-            CurrentTime = timezone.now()
-            CloseLog.LogoutTime = CurrentTime
-            CloseLog.save()
+            current_time = timezone.now()
+            close_log.logout_time = current_time
+            close_log.save()
 
-            return Response({"LogoutTime": CurrentTime}, status=200)
+            return Response({"logout_time": current_time}, status=200)
         
-        return Response({"Error": "No open shift found for today. (Note: Previous days cannot be closed today)"}, status=404)
+        return Response({"error": "No open shift found for today. (Note: Previous days cannot be closed today)"}, status=404)
 
 
 class RegisterView(generics.CreateAPIView):
