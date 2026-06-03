@@ -62,6 +62,8 @@ export default function AdminEmployees() {
                     { ...Log, IsActive: !CurrentStatus } : Log) : 
                     null
                 );
+                
+                SetSelectedLog(null)
             } 
             catch (Error) {
               console.error(Error)
