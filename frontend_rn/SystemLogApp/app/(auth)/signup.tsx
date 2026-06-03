@@ -14,12 +14,11 @@ export default function SignupScreen() {
   const [Password, SetPassword] = useState('')
   const [ConfirmPassword, SetConfirmPassword] = useState('')
 
-  const [SuccessMessage, SetSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async () => {
     if (!FirstName || !LastName || !ProjectInvolved || !Password || !ConfirmPassword) {
-      
+      return Alert.alert('Warning', 'All fields are mandatory. Fill all the fields.')
     }
 
     if (Password !== ConfirmPassword) {
@@ -39,9 +38,9 @@ export default function SignupScreen() {
 
       const EmployeeID = response.data.EmployeeId;
 
-      SetSuccessMessage(`Success! Your Employee ID is: ${EmployeeID}. Contact Administrator for Approval`);
-
+      return Alert.alert('Success', `Your Employee ID is: ${EmployeeID}. Contact Administrator for Approval`);
       router.replace('/(auth)/login')
+
     } catch (err: unknown) {
       if (err instanceof Error) {
         Alert.alert('Authentication Failed', err.message || 'Fill in all the details')
@@ -111,7 +110,7 @@ export default function SignupScreen() {
         
         
         <Link href="/(auth)/login" asChild>
-          <TouchableOpacity style={{ marginTop: 25 }}>
+          <TouchableOpacity style={{ marginTop: 15 }}>
             <Text style={styles.linkText}>Already have an account? Login</Text>
           </TouchableOpacity>
         </Link>
