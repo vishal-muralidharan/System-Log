@@ -38,8 +38,18 @@ export default function SignupScreen() {
 
       const EmployeeID = response.data.EmployeeId;
 
-      return Alert.alert('Success', `Your Employee ID is: ${EmployeeID}. Contact Administrator for Approval`);
-      router.replace('/(auth)/login')
+      Alert.alert(
+        'Success', 
+        `Your Employee ID is: ${EmployeeID}. Contact Administrator for Approval`,
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              router.replace('/(auth)/login');
+            }
+          }
+        ]
+      );
 
     } catch (err: unknown) {
       if (err instanceof Error) {
