@@ -190,7 +190,7 @@ export default function AdminEmployees() {
           data={filteredEmployees}
           keyExtractor={(item) => item.id}
           renderItem={renderLogCell}
-          ListEmptyComponent={<Text style={styles.emptyText}>No Employees Present</Text>} 
+          ListEmptyComponent={<Text style={styles.emptyText}>No Employee Details Present</Text>} 
         />
       </View>
 
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
     padding: 25,
     elevation: 5,
     justifyContent: 'space-evenly',
-    height: '45%'
+    height: '40%'
   },
 
   modalTitle: { 

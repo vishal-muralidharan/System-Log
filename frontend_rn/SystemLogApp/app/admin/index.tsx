@@ -87,7 +87,7 @@ export default function AdminHome() {
           data={TodaysLogs}
           keyExtractor={(item) => item.LogId.toString()}
           renderItem={renderLogCell}
-          ListEmptyComponent={<Text style={styles.emptyText}>No Logs for Today ({Today})</Text>} 
+          ListEmptyComponent={<Text style={styles.emptyText}>No Logs for Today</Text>} 
         />
       </View>
 
