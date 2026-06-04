@@ -1,43 +1,41 @@
 from rest_framework import viewsets, generics, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action
 from django.utils import timezone
+
 from .models import Employee, AttendanceLog
-from .serializers import EmployeeSerializer, AttendanceSerializer
-from rest_framework.permissions import AllowAny
-from .serializers import RegisterSerializer
-from django.contrib.auth import get_user_model
+from .serializers import EmployeeSerializer, AttendanceSerializer, RegisterSerializer
+from .permissions import IsAdminUserCustom 
 
 class EmployeeViewSet(viewsets.ModelViewSet):
     """
     Handles Add/Edit/Delete/List for Employee data.
     """
     serializer_class = EmployeeSerializer
-    permission_classes = [IsAuthenticated]
 
-    # For Admin Sorting, Searching and Filtering
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['project_involved', 'is_active', 'is_admin']
     search_fields = ['employee_id']
     ordering_fields = ['id', 'employee_id']
+    
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.action in ['create', 'destroy']:
+            permission_classes = [IsAuthenticated, IsAdminUserCustom]
+        else:
+            permission_classes = [IsAuthenticated]
+            
+        return [permission() for permission in permission_classes]
 
     def get_queryset(self):
         user = self.request.user
         if user.is_admin:
             return Employee.objects.all()
         return Employee.objects.filter(id=user.id)
-    
-    def create(self, request, *args, **kwargs):
-        if not request.user.is_admin:
-            return Response({"error": "Only admins can add employees."}, status=403)
-        return super().create(request, *args, **kwargs)
-    
-    def destroy(self, request, *args, **kwargs):
-        if not request.user.is_admin:
-            return Response({"error": "Only admins can delete employee data."}, status=403)
-        return super().destroy(request, *args, **kwargs)
     
     def retrieve(self, request, *args, **kwargs):
         employee_instance = self.get_object()
@@ -51,7 +49,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         response_data['attendance_history'] = serialized_logs.data
 
         return Response(response_data, status=200)
-    
+
     def update(self, request, *args, **kwargs):
         if not request.user.is_admin and 'is_admin' in request.data:
             return Response({"error": "You do not have permission to change admin status."}, status=403)
