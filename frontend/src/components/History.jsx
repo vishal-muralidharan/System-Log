@@ -67,8 +67,15 @@ const History = () => {
                 <td>{data.log_id}</td>
                 <td>{formatDate(data.login_time)}</td>
                 <td>{data.work_status}</td>
-                <td>{formatTime(data.login_time)}</td>
-                <td>{data.logout_time === null ? 'Unmarked' : (data.work_status === 'Leave' ? '-' : formatTime(data.logout_time))}</td>
+                {data.work_status === 'Leave' ? 
+                  <td colSpan={2}>{formatTime(data.login_time)}</td> :
+                  (
+                    <>
+                      <td>{formatTime(data.login_time)}</td>
+                      <td>{data.logout_time === null ? 'Unmarked' : formatTime(data.logout_time)}</td>
+                    </>
+                  )}
+                
               </tr>
             ))}
           </tbody>
