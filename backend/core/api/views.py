@@ -59,6 +59,15 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         if not request.user.is_admin and 'is_admin' in request.data:
             return Response({"error": "You do not have permission to change admin status."}, status=403)
         return super().partial_update(request, *args, **kwargs)
+    
+    @action(detail=False, methods=['GET'])
+    def me(self, request):
+        """
+        Always returns the profile of the currently logged-in user, 
+        regardless of whether they are an Admin or a Standard Employee.
+        """
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data, status=200)
 
 
 class AttendanceLogViewSet(viewsets.ModelViewSet):

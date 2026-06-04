@@ -25,8 +25,8 @@ const Login = () => {
             localStorage.setItem('refresh_token', loginResponse.data.refresh)
             axiosInstance.defaults.headers.Authorization = `Bearer ${loginResponse.data.access}`
 
-            const profileResponse = await axiosInstance.get('employees/')
-            const userProfile = profileResponse.data[0]
+            const profileResponse = await axiosInstance.get('employees/me/')
+            const userProfile = profileResponse.data
 
             if (userProfile) {
                 if (userProfile.is_active) {
